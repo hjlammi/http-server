@@ -17,9 +17,6 @@ Content-Length: 14\r
 <h1>jee</h1>\r
 '''
 
-def hello():
-    return "hello"
-
 def main():
     lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     lsock.bind((HOST, PORT))
