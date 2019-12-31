@@ -12,10 +12,11 @@ describe('server', function() {
     });
 
     it('receives 404 Not Found response from the server', function() {
-        cy.request('/').as('response');
+        cy.request('/notfound').as('response');
         cy.get('@response').should((response) => {
-            expect(response.statusText).to.equal('Not found');
-            expect(response.status).to.equal(400);
+            expect(response.statusText).to.equal('Not Found');
+            expect(response.status).to.equal(404);
         });
+        cy.contains('Page not found');
     });
 });
