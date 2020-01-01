@@ -25,12 +25,12 @@ def main():
         events = sel.select(timeout=None)
         for key, mask in events:
             if key.data is None:
-                conn, addr = key.fileobj.accept()  # Should be ready to read
+                sock, addr = key.fileobj.accept()  # Should be ready to read
                 print('accepted connection from', addr)
-                conn.setblocking(False)
-                connection = Connection(addr)
+                sock.setblocking(False)
+                connection = Connection(addr, sock)
                 events = selectors.EVENT_READ | selectors.EVENT_WRITE
-                sel.register(conn, events, data=connection)
+                sel.register(sock, events, data=connection)
             else:
                 sock = key.fileobj
                 connection = key.data
