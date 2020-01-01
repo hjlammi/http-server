@@ -1,6 +1,9 @@
 class Connection:
 
+    RECEIVING_REQUEST = 'RECEIVING_REQUEST'
+    SENDING_RESPONSE = 'SENDING_RESPONSE'
+
     def __init__(self, address):
         self.address = address
         self.data = b''
-        self.state = 'RECEIVING_REQUEST'
+        self.state = Connection.RECEIVING_REQUEST
