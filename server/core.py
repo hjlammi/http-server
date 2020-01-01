@@ -1,6 +1,6 @@
 import socket
-import types
 import selectors
+from .connection import Connection
 sel = selectors.DefaultSelector()
 
 HOST = "127.0.0.1"
@@ -32,24 +32,24 @@ def main():
                 conn, addr = key.fileobj.accept()  # Should be ready to read
                 print('accepted connection from', addr)
                 conn.setblocking(False)
-                data = types.SimpleNamespace(addr=addr, inb=b'', state=RECEIVING_REQUEST)
+                connection = Connection(addr)
                 events = selectors.EVENT_READ | selectors.EVENT_WRITE
-                sel.register(conn, events, data=data)
+                sel.register(conn, events, data=connection)
             else:
                 sock = key.fileobj
-                data = key.data
-                if mask & selectors.EVENT_READ and data.state == RECEIVING_REQUEST:
+                connection = key.data
+                if mask & selectors.EVENT_READ and connection.state == RECEIVING_REQUEST:
                     recv_data = sock.recv(1024)  # Should be ready to read
                     if recv_data:
                         print("recv_data", recv_data)
-                        data.inb += recv_data
+                        connection.data += recv_data
                         if b'\r\n\r\n' in recv_data:
-                            data.state = SENDING_RESPONSE
+                            connection.state = SENDING_RESPONSE
                     else:
-                        print("closing connection to", data.addr)
+                        print("closing connection to", connection.address)
                         sel.unregister(sock)
                         sock.close()
-                if mask & selectors.EVENT_WRITE and data.state == SENDING_RESPONSE:
+                if mask & selectors.EVENT_WRITE and connection.state == SENDING_RESPONSE:
                     sent = sock.send(RESPONSE.encode())  # Should be ready to write
                     print("Sent", sent)
                     sel.unregister(sock)
