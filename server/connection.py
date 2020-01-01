@@ -8,3 +8,5 @@ class Connection:
         self.socket = socket
         self.data = b''
         self.state = Connection.RECEIVING_REQUEST
+
+        self.socket.setblocking(False)

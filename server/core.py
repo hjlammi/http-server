@@ -27,7 +27,6 @@ def main():
             if key.data is None:
                 sock, addr = key.fileobj.accept()  # Should be ready to read
                 print('accepted connection from', addr)
-                sock.setblocking(False)
                 connection = Connection(addr, sock)
                 events = selectors.EVENT_READ | selectors.EVENT_WRITE
                 sel.register(sock, events, data=connection)
