@@ -5,13 +5,17 @@ HOST = "127.0.0.1"
 PORT = 8800
 ADDR = f'http://{HOST}:{PORT}'
 
-def test_connection_sends_request():
+def create_listening_socket():
     lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     lsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     lsock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 1)
     lsock.bind((HOST, PORT))
     lsock.listen()
     lsock.setblocking(False)
+    return lsock
+
+def test_connection_sends_request():
+    lsock = create_listening_socket()
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((HOST, PORT))
