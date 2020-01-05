@@ -14,3 +14,5 @@ class Connection:
     def send(self, request):
         self.socket.send(request)
 
+    def close(self):
+        self.socket.close()

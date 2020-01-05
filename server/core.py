@@ -42,11 +42,11 @@ def main():
                     else:
                         print("closing connection to", connection.address)
                         sel.unregister(connection.socket)
-                        connection.socket.close()
+                        connection.close()
                 if mask & selectors.EVENT_WRITE and connection.state == Connection.SENDING_RESPONSE:
                     connection.send(RESPONSE.encode())  # Should be ready to write
                     sel.unregister(connection.socket)
-                    connection.socket.close()
+                    connection.close()
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,6 @@
 from server.connection import Connection
 import socket
+import pytest
 
 HOST = "127.0.0.1"
 PORT = 8800
@@ -31,3 +32,18 @@ def test_connection_sends_request():
 
     req_to_receive = client_sock.recv(1024)
     assert req_to_receive == req_to_send
+
+def test_cannot_send_after_connection_is_closed():
+    lsock = create_listening_socket()
+
+    client_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_sock.connect((HOST, PORT))
+
+    # Let's accept connection from client socket and give the new conn_sock to Connection
+    conn_sock, addr = lsock.accept()
+    print('accepted connection from', addr)
+
+    connection = Connection(ADDR, conn_sock)
+    connection.close()
+    with pytest.raises(Exception):
+        assert connection.send(b'test')
