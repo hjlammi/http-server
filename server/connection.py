@@ -10,3 +10,7 @@ class Connection:
         self.state = Connection.RECEIVING_REQUEST
 
         self.socket.setblocking(False)
+
+    def send(self, request):
+        self.socket.send(request)
+

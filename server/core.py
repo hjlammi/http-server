@@ -44,8 +44,7 @@ def main():
                         sel.unregister(connection.socket)
                         connection.socket.close()
                 if mask & selectors.EVENT_WRITE and connection.state == Connection.SENDING_RESPONSE:
-                    sent = connection.socket.send(RESPONSE.encode())  # Should be ready to write
-                    print("Sent", sent)
+                    connection.send(RESPONSE.encode())  # Should be ready to write
                     sel.unregister(connection.socket)
                     connection.socket.close()
 
