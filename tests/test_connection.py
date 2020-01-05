@@ -17,9 +17,10 @@ def create_listening_socket():
 def test_connection_sends_request():
     lsock = create_listening_socket()
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((HOST, PORT))
+    client_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_sock.connect((HOST, PORT))
 
+    # Let's accept connection from client socket and give the new conn_sock to Connection
     conn_sock, addr = lsock.accept()
     print('accepted connection from', addr)
 
@@ -28,5 +29,5 @@ def test_connection_sends_request():
     connection.send(req_to_send)
     connection.socket.close()
 
-    req_to_receive = sock.recv(1024)
+    req_to_receive = client_sock.recv(1024)
     assert req_to_receive == req_to_send
