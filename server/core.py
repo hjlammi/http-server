@@ -31,10 +31,9 @@ def main():
                 events = selectors.EVENT_READ | selectors.EVENT_WRITE
                 sel.register(sock, events, data=connection)
             else:
-                sock = key.fileobj
                 connection = key.data
                 if mask & selectors.EVENT_READ and connection.state == Connection.RECEIVING_REQUEST:
-                    recv_data = sock.recv(1024)  # Should be ready to read
+                    recv_data = connection.socket.recv(1024)  # Should be ready to read
                     if recv_data:
                         print("recv_data", recv_data)
                         connection.data += recv_data
@@ -42,13 +41,13 @@ def main():
                             connection.state = Connection.SENDING_RESPONSE
                     else:
                         print("closing connection to", connection.address)
-                        sel.unregister(sock)
-                        sock.close()
+                        sel.unregister(connection.socket)
+                        connection.socket.close()
                 if mask & selectors.EVENT_WRITE and connection.state == Connection.SENDING_RESPONSE:
-                    sent = sock.send(RESPONSE.encode())  # Should be ready to write
+                    sent = connection.socket.send(RESPONSE.encode())  # Should be ready to write
                     print("Sent", sent)
-                    sel.unregister(sock)
-                    sock.close()
+                    sel.unregister(connection.socket)
+                    connection.socket.close()
 
 if __name__ == "__main__":
     main()
