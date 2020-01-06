@@ -6,7 +6,18 @@ HOST = "127.0.0.1"
 PORT = 8800
 ADDR = f'http://{HOST}:{PORT}'
 
+def setup_function():
+    global client_sock, conn_sock, addr
+    lsock = create_listening_socket()
+
+    client_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_sock.connect((HOST, PORT))
+
+    # Let's accept connection from client socket and give the new conn_sock to Connection
+    conn_sock, addr = lsock.accept()
+
 def create_listening_socket():
+    global lsock
     lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     lsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     lsock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 1)
@@ -16,15 +27,6 @@ def create_listening_socket():
     return lsock
 
 def test_connection_sends_request():
-    lsock = create_listening_socket()
-
-    client_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_sock.connect((HOST, PORT))
-
-    # Let's accept connection from client socket and give the new conn_sock to Connection
-    conn_sock, addr = lsock.accept()
-    print('accepted connection from', addr)
-
     connection = Connection(ADDR, conn_sock)
     req_to_send = b'test'
     connection.send(req_to_send)
@@ -34,15 +36,6 @@ def test_connection_sends_request():
     assert req_to_receive == req_to_send
 
 def test_cannot_send_after_connection_is_closed():
-    lsock = create_listening_socket()
-
-    client_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_sock.connect((HOST, PORT))
-
-    # Let's accept connection from client socket and give the new conn_sock to Connection
-    conn_sock, addr = lsock.accept()
-    print('accepted connection from', addr)
-
     connection = Connection(ADDR, conn_sock)
     connection.close()
     with pytest.raises(Exception):
