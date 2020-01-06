@@ -4,7 +4,6 @@ import pytest
 
 HOST = "127.0.0.1"
 PORT = 8800
-ADDR = f'http://{HOST}:{PORT}'
 
 def setup_function():
     global client_sock, conn_sock, addr
@@ -31,7 +30,7 @@ def create_client_socket():
     return client_sock
 
 def test_connection_sends_response_to_client():
-    connection = Connection(ADDR, conn_sock)
+    connection = Connection(addr, conn_sock)
     response_to_send = b'test'
     connection.send(response_to_send)
     connection.socket.close()
@@ -40,7 +39,7 @@ def test_connection_sends_response_to_client():
     assert response_to_receive == response_to_send
 
 def test_cannot_send_after_connection_is_closed():
-    connection = Connection(ADDR, conn_sock)
+    connection = Connection(addr, conn_sock)
     connection.close()
     with pytest.raises(Exception):
         assert connection.send(b'test')
