@@ -12,11 +12,11 @@ def setup_function():
 
 def test_connection_sends_response_to_client():
     connection = Connection(ADDR, fake_socket)
-    response_to_send = b'test'
-    connection.send(response_to_send)
+    response = b'test'
+    connection.send(response)
     connection.close()
 
-    assert fake_socket.sendBuffer == response_to_send
+    assert fake_socket.send_buffer == response
 
 def test_cannot_send_after_connection_is_closed():
     connection = Connection(ADDR, fake_socket)

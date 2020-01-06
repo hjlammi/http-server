@@ -1,7 +1,7 @@
 class FakeSocket:
 
     def __init__(self):
-        self.sendBuffer = b''
+        self.send_buffer = b''
         self.blocking = True
         self.closed = False
 
