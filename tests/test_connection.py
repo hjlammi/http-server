@@ -14,6 +14,11 @@ def setup_function():
     # Let's accept connection from client socket and give the new conn_sock to Connection
     conn_sock, addr = lsock.accept()
 
+def teardown_function():
+    lsock.close()
+    client_sock.close()
+    conn_sock.close()
+
 def create_listening_socket():
     global lsock
     lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
