@@ -11,8 +11,8 @@ class Connection:
 
         self.socket.setblocking(False)
 
-    def send(self, request):
-        self.socket.send(request)
+    def send(self, response):
+        self.socket.send(response)
 
     def close(self):
         self.socket.close()

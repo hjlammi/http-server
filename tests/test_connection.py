@@ -30,14 +30,14 @@ def create_client_socket():
     client_sock.connect((HOST, PORT))
     return client_sock
 
-def test_connection_sends_request():
+def test_connection_sends_response_to_client():
     connection = Connection(ADDR, conn_sock)
-    req_to_send = b'test'
-    connection.send(req_to_send)
+    response_to_send = b'test'
+    connection.send(response_to_send)
     connection.socket.close()
 
-    req_to_receive = client_sock.recv(1024)
-    assert req_to_receive == req_to_send
+    response_to_receive = client_sock.recv(1024)
+    assert response_to_receive == response_to_send
 
 def test_cannot_send_after_connection_is_closed():
     connection = Connection(ADDR, conn_sock)
