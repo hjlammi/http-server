@@ -10,8 +10,7 @@ def setup_function():
     global client_sock, conn_sock, addr
     lsock = create_listening_socket()
 
-    client_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_sock.connect((HOST, PORT))
+    client_sock = create_client_socket()
 
     # Let's accept connection from client socket and give the new conn_sock to Connection
     conn_sock, addr = lsock.accept()
@@ -25,6 +24,11 @@ def create_listening_socket():
     lsock.listen()
     lsock.setblocking(False)
     return lsock
+
+def create_client_socket():
+    client_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_sock.connect((HOST, PORT))
+    return client_sock
 
 def test_connection_sends_request():
     connection = Connection(ADDR, conn_sock)
