@@ -12,7 +12,8 @@ class Connection:
         self.socket.setblocking(False)
 
     def send(self, response):
-        self.socket.send(response)
+        len_bytes_sent = self.socket.send(response)
+        return len_bytes_sent
 
     def close(self):
         self.socket.close()
