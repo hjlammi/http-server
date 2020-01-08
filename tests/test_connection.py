@@ -10,13 +10,12 @@ def setup_function():
     global fake_socket
     fake_socket = FakeSocket()
 
-def test_connection_sends_short_response_to_client():
+def test_send_stores_response_to_send_buffer():
     connection = Connection(ADDR, fake_socket)
     response = b'test'
     connection.send(response)
-    connection.close()
 
-    assert fake_socket.send_buffer == response
+    assert connection.send_buffer == response
 
 def test_cannot_send_after_connection_is_closed():
     connection = Connection(ADDR, fake_socket)
