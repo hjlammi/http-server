@@ -17,6 +17,13 @@ def test_send_stores_response_to_send_buffer():
 
     assert connection.send_buffer == response
 
+def test_send_changes_connection_state_as_sending_response():
+    connection = Connection(ADDR, fake_socket)
+    response = b'test'
+    connection.send(response)
+
+    assert connection.state == Connection.SENDING_RESPONSE
+
 def test_cannot_send_after_connection_is_closed():
     connection = Connection(ADDR, fake_socket)
     connection.close()

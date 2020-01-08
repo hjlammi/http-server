@@ -15,6 +15,7 @@ class Connection:
 
     def send(self, response):
         self.send_buffer += response
+        self.state = Connection.SENDING_RESPONSE
         len_bytes_sent = self.socket.send(response)
         self.response_left = response[len_bytes_sent:]
         return len_bytes_sent
