@@ -29,3 +29,11 @@ def test_cannot_send_after_connection_is_closed():
     connection.close()
     with pytest.raises(Exception, match='Connection closed'):
         connection.send(b'test')
+
+def test_update_sends_whole_response_to_client():
+    connection = Connection(ADDR, fake_socket)
+    response = b'test'
+    connection.send(response)
+    connection.update()
+
+    assert fake_socket.recv_buffer == response

@@ -20,6 +20,9 @@ class Connection:
             self.send_buffer += response
             self.state = Connection.SENDING_RESPONSE
 
+    def update(self):
+        self.socket.send(self.send_buffer)
+
     def close(self):
         self.state = Connection.CLOSED
         self.socket.close()
