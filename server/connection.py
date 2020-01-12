@@ -9,9 +9,13 @@ class Connection:
         self.socket = socket
         self.data = b''
         self.send_buffer = b''
+        self.recv_buffer = b''
         self.state = Connection.RECEIVING_REQUEST
 
         self.socket.setblocking(False)
+
+    def receive(self, bufsize):
+        self.recv_buffer += self.socket.recv(bufsize)
 
     def send(self, response):
         if (self.state == Connection.CLOSED):

@@ -5,6 +5,7 @@ import pytest
 HOST = "127.0.0.1"
 PORT = 8800
 ADDR = f'http://{HOST}:{PORT}'
+BUFFER_SIZE = 4
 
 def setup_function():
     global fake_socket
@@ -70,3 +71,25 @@ def test_cannot_update_after_connection_is_closed():
     connection.close()
     with pytest.raises(Exception, match='Connection closed'):
         connection.update()
+
+def test_stores_received_request_in_recv_buffer():
+    connection = Connection(ADDR, fake_socket)
+    request = fake_socket.send_buffer
+    connection.receive(BUFFER_SIZE)
+
+    assert connection.recv_buffer == request
+
+def test_connection_receives_first_4_bytes_of_longer_request():
+    connection = Connection(ADDR, fake_socket)
+    fake_socket.send_buffer = b'longer test request'
+    connection.receive(BUFFER_SIZE)
+
+    assert connection.recv_buffer == b'long'
+
+def test_connection_receives_longer_request_in_two_chunks():
+    connection = Connection(ADDR, fake_socket)
+    fake_socket.send_buffer = b'longer test request'
+    connection.receive(BUFFER_SIZE)
+    connection.receive(BUFFER_SIZE)
+
+    assert connection.recv_buffer == b'longer t'
