@@ -21,7 +21,9 @@ class Connection:
             self.state = Connection.SENDING_RESPONSE
 
     def update(self):
-        self.socket.send(self.send_buffer)
+        response = self.send_buffer
+        len_bytes_sent = self.socket.send(response)
+        self.send_buffer = response[len_bytes_sent:]
 
     def close(self):
         self.state = Connection.CLOSED
