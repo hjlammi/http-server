@@ -38,7 +38,7 @@ def main():
                         print("recv_data", recv_data)
                         connection.data += recv_data
                         if b'\r\n\r\n' in recv_data:
-                            connection.state = Connection.SENDING_RESPONSE
+                            connection.send(RESPONSE.encode())
                     else:
                         print("closing connection to", connection.address)
                         sel.unregister(connection.socket)
