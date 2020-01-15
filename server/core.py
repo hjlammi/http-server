@@ -33,7 +33,7 @@ def main():
             else:
                 connection = key.data
                 if mask & selectors.EVENT_READ and connection.state == Connection.RECEIVING_REQUEST:
-                    recv_data = connection.socket.recv(1024)  # Should be ready to read
+                    recv_data = connection.receive()  # Should be ready to read
                     if recv_data:
                         print("recv_data", recv_data)
                         connection.data += recv_data

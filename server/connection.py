@@ -14,7 +14,7 @@ class Connection:
 
         self.socket.setblocking(False)
 
-    def receive(self, bufsize):
+    def receive(self, bufsize = 1024):
         self.recv_buffer += self.socket.recv(bufsize)
 
     def send(self, response):
