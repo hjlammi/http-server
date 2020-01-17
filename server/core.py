@@ -28,12 +28,13 @@ def main():
                 sock, addr = key.fileobj.accept()  # Should be ready to read
                 print('accepted connection from', addr)
                 connection = Connection(addr, sock)
+                connection.receive(callback, 1024)
                 events = selectors.EVENT_READ | selectors.EVENT_WRITE
                 sel.register(sock, events, data=connection)
             else:
                 connection = key.data
                 if mask & selectors.EVENT_READ and connection.state == Connection.RECEIVING_REQUEST:
-                    recv_data = connection.receive()  # Should be ready to read
+                    recv_data = connection.socket.recv(1024)  # Should be ready to read
                     if recv_data:
                         print("recv_data", recv_data)
                         connection.data += recv_data
@@ -44,9 +45,12 @@ def main():
                         sel.unregister(connection.socket)
                         connection.close()
                 if mask & selectors.EVENT_WRITE and connection.state == Connection.SENDING_RESPONSE:
-                    connection.send(RESPONSE.encode())  # Should be ready to write
+                    connection.socket.send(RESPONSE.encode())  # Should be ready to write
                     sel.unregister(connection.socket)
                     connection.close()
+
+def callback():
+    pass
 
 if __name__ == "__main__":
     main()

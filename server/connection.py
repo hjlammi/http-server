@@ -10,12 +10,20 @@ class Connection:
         self.data = b''
         self.send_buffer = b''
         self.recv_buffer = b''
-        self.state = Connection.RECEIVING_REQUEST
+        self.buffer_size = 1024
+        self.request_received_callback = None
+        self.state = None
 
         self.socket.setblocking(False)
 
-    def receive(self, bufsize = 1024):
-        self.recv_buffer += self.socket.recv(bufsize)
+    def receive(self, request_received_callback, bufsize):
+        self.buffer_size = bufsize
+        self.request_received_callback = request_received_callback
+        self.state = Connection.RECEIVING_REQUEST
+        received_bytes = self.socket.recv(bufsize)
+        self.recv_buffer += received_bytes
+        if received_bytes == b'\r\n\r\n':
+            self.state = Connection.SENDING_RESPONSE
 
     def send(self, response):
         if (self.state == Connection.CLOSED):
