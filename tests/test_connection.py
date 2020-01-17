@@ -95,22 +95,33 @@ def test_connection_changes_state_to_receiving_request_when_receive_called():
 
 def test_stores_received_request_in_recv_buffer():
     connection = Connection(ADDR, fake_socket)
-    request = fake_socket.send_buffer
     connection.receive(fake_callback, BUFFER_SIZE)
+    request = fake_socket.send_buffer
+    connection.update()
 
     assert connection.recv_buffer == request
 
 def test_connection_receives_first_4_bytes_of_longer_request():
     connection = Connection(ADDR, fake_socket)
-    fake_socket.send_buffer = b'longer test request'
     connection.receive(fake_callback, BUFFER_SIZE)
+    fake_socket.send_buffer = b'longer test request'
+    connection.update()
 
     assert connection.recv_buffer == b'long'
 
 def test_connection_receives_longer_request_in_two_chunks():
     connection = Connection(ADDR, fake_socket)
+    connection.receive(fake_callback, BUFFER_SIZE)
     fake_socket.send_buffer = b'longer test request'
-    connection.receive(fake_callback, BUFFER_SIZE)
-    connection.receive(fake_callback, BUFFER_SIZE)
+    connection.update()
+    connection.update()
 
     assert connection.recv_buffer == b'longer t'
+
+def test_connection_changes_state_to_sending_after_receiving_the_whole_request():
+    connection = Connection(ADDR, fake_socket)
+    connection.receive(fake_callback, BUFFER_SIZE)
+    fake_socket.send_buffer = b'\r\n\r\n'
+    connection.update()
+
+    assert connection.state == Connection.SENDING_RESPONSE
