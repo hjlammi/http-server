@@ -34,7 +34,7 @@ class Connection:
             self.recv_buffer += received_bytes
             if received_bytes == b'\r\n\r\n':
                 self.state = Connection.SENDING_RESPONSE
-        else:
+        elif (self.state == Connection.SENDING_RESPONSE):
             response = self.send_buffer
             len_bytes_sent = self.socket.send(response)
             self.send_buffer = response[len_bytes_sent:]
