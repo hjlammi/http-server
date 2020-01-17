@@ -1,14 +1,12 @@
 from server.connection import Connection
 from fake_socket import FakeSocket
 import pytest
+from unittest.mock import Mock
 
 HOST = "127.0.0.1"
 PORT = 8800
 ADDR = f'http://{HOST}:{PORT}'
 BUFFER_SIZE = 4
-
-def fake_callback():
-    pass
 
 def setup_function():
     global fake_socket
@@ -77,25 +75,26 @@ def test_cannot_send_after_connection_is_closed():
 
 def test_connection_stores_buffer_size_when_starting_to_receive_request():
     connection = Connection(ADDR, fake_socket)
-    connection.receive(fake_callback, BUFFER_SIZE)
+    connection.receive(Mock(), BUFFER_SIZE)
 
     assert connection.buffer_size == BUFFER_SIZE
 
 def test_connection_stores_callback_when_starting_to_receive_request():
     connection = Connection(ADDR, fake_socket)
+    fake_callback = Mock()
     connection.receive(fake_callback, BUFFER_SIZE)
 
     assert connection.request_received_callback == fake_callback
 
 def test_connection_changes_state_to_receiving_request_when_receive_called():
     connection = Connection(ADDR, fake_socket)
-    connection.receive(fake_callback, BUFFER_SIZE)
+    connection.receive(Mock(), BUFFER_SIZE)
 
     assert connection.state == Connection.RECEIVING_REQUEST
 
 def test_stores_received_request_in_recv_buffer():
     connection = Connection(ADDR, fake_socket)
-    connection.receive(fake_callback, BUFFER_SIZE)
+    connection.receive(Mock(), BUFFER_SIZE)
     request = fake_socket.send_buffer
     connection.update()
 
@@ -103,7 +102,7 @@ def test_stores_received_request_in_recv_buffer():
 
 def test_connection_receives_first_4_bytes_of_longer_request():
     connection = Connection(ADDR, fake_socket)
-    connection.receive(fake_callback, BUFFER_SIZE)
+    connection.receive(Mock(), BUFFER_SIZE)
     fake_socket.send_buffer = b'longer test request'
     connection.update()
 
@@ -111,7 +110,7 @@ def test_connection_receives_first_4_bytes_of_longer_request():
 
 def test_connection_receives_longer_request_in_two_chunks():
     connection = Connection(ADDR, fake_socket)
-    connection.receive(fake_callback, BUFFER_SIZE)
+    connection.receive(Mock(), BUFFER_SIZE)
     fake_socket.send_buffer = b'longer test request'
     connection.update()
     connection.update()
@@ -120,7 +119,7 @@ def test_connection_receives_longer_request_in_two_chunks():
 
 def test_connection_changes_state_to_sending_after_receiving_the_whole_request():
     connection = Connection(ADDR, fake_socket)
-    connection.receive(fake_callback, BUFFER_SIZE)
+    connection.receive(Mock(), BUFFER_SIZE)
     fake_socket.send_buffer = b'\r\n\r\n'
     connection.update()
 
