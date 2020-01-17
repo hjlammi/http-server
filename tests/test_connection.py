@@ -56,8 +56,8 @@ def test_update_removes_beginning_of_response_from_send_buffer_with_longer_respo
     connection.send(response)
     connection.update()
 
-    assert connection.send_buffer == b' longer response' 
-    assert fake_socket.recv_buffer == b'test' 
+    assert connection.send_buffer == b' longer response'
+    assert fake_socket.recv_buffer == b'test'
 
 def test_update_called_twice_sends_the_whole_response():
     connection = Connection(ADDR, fake_socket)
@@ -66,8 +66,8 @@ def test_update_called_twice_sends_the_whole_response():
     connection.update()
     connection.update()
 
-    assert connection.send_buffer == b'' 
-    assert fake_socket.recv_buffer == b'testing' 
+    assert connection.send_buffer == b''
+    assert fake_socket.recv_buffer == b'testing'
 
 def test_cannot_send_after_connection_is_closed():
     connection = Connection(ADDR, fake_socket)
