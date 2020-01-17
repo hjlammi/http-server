@@ -69,11 +69,11 @@ def test_update_called_twice_sends_the_whole_response():
     assert connection.send_buffer == b'' 
     assert fake_socket.recv_buffer == b'testing' 
 
-def test_cannot_update_after_connection_is_closed():
+def test_cannot_send_after_connection_is_closed():
     connection = Connection(ADDR, fake_socket)
     connection.close()
     with pytest.raises(Exception, match='Connection closed'):
-        connection.update()
+        connection.send(b'')
 
 def test_connection_stores_buffer_size_when_starting_to_receive_request():
     connection = Connection(ADDR, fake_socket)
