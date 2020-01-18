@@ -150,3 +150,12 @@ def test_received_callback_is_called_after_whole_request_is_received():
     connection.update()
 
     received_callback.assert_called_with(connection)
+
+def test_connection_is_closed_after_the_whole_response_is_sent():
+    close_callback = Mock()
+    connection = Connection(ADDR, fake_socket, close_callback)
+    response = b'test'
+    connection.send(response)
+    connection.update()
+
+    close_callback.assert_called_with(connection.socket)

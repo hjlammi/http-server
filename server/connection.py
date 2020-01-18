@@ -42,6 +42,8 @@ class Connection:
             response = self.send_buffer
             len_bytes_sent = self.socket.send(response)
             self.send_buffer = response[len_bytes_sent:]
+            if not self.send_buffer:
+                self.close()
 
     def close(self):
         self.state = Connection.CLOSED
