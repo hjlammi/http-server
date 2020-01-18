@@ -34,27 +34,18 @@ def main():
             else:
                 connection = key.data
                 if mask & selectors.EVENT_READ and connection.state == Connection.RECEIVING_REQUEST:
-                    recv_data = connection.socket.recv(1024)  # Should be ready to read
-                    if recv_data:
-                        print("recv_data", recv_data)
-                        connection.data += recv_data
-                        if b'\r\n\r\n' in recv_data:
-                            connection.send(RESPONSE.encode())
-                    else:
-                        print("closing connection to", connection.address)
-                        sel.unregister(connection.socket)
-                        connection.close()
+                    connection.update()
                 if mask & selectors.EVENT_WRITE and connection.state == Connection.SENDING_RESPONSE:
                     connection.socket.send(RESPONSE.encode())  # Should be ready to write
-                    sel.unregister(connection.socket)
                     connection.close()
 
 # Starts sending response to the client after the whole request has been received
 def request_received_callback(connection):
     connection.send(RESPONSE.encode())
 
+# Unregisters socket after the connection has been closed
 def connection_closed_callback(socket):
-    pass
+    sel.unregister(socket)
 
 if __name__ == "__main__":
     main()
