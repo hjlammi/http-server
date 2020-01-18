@@ -34,7 +34,7 @@ class Connection:
             received_bytes = self.socket.recv(self.buffer_size)
             if received_bytes:
                 self.recv_buffer += received_bytes
-                if received_bytes == b'\r\n\r\n':
+                if b'\r\n\r\n' in self.recv_buffer:
                     self.request_received_callback(self)
             else:
                 self.close()

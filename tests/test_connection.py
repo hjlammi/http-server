@@ -140,3 +140,13 @@ def test_connection_is_closed_if_nothing_received_from_the_client():
     connection.update()
 
     close_callback.assert_called_with(connection.socket)
+
+def test_received_callback_is_called_after_whole_request_is_received():
+    connection = Connection(ADDR, fake_socket, Mock())
+    received_callback = Mock()
+    connection.receive(received_callback, BUFFER_SIZE)
+    fake_socket.send_buffer = b't \r\n\r\n'
+    connection.update()
+    connection.update()
+
+    received_callback.assert_called_with(connection)
