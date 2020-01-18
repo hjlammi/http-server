@@ -33,7 +33,7 @@ class Connection:
             received_bytes = self.socket.recv(self.buffer_size)
             self.recv_buffer += received_bytes
             if received_bytes == b'\r\n\r\n':
-                self.state = Connection.SENDING_RESPONSE
+                self.request_received_callback(self)
         elif (self.state == Connection.SENDING_RESPONSE):
             response = self.send_buffer
             len_bytes_sent = self.socket.send(response)

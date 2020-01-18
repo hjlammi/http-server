@@ -28,7 +28,7 @@ def main():
                 sock, addr = key.fileobj.accept()  # Should be ready to read
                 print('accepted connection from', addr)
                 connection = Connection(addr, sock)
-                connection.receive(callback, 1024)
+                connection.receive(request_received_callback, 1024)
                 events = selectors.EVENT_READ | selectors.EVENT_WRITE
                 sel.register(sock, events, data=connection)
             else:
@@ -49,8 +49,9 @@ def main():
                     sel.unregister(connection.socket)
                     connection.close()
 
-def callback():
-    pass
+# Starts sending response to the client after the whole request has been received
+def request_received_callback(connection):
+    connection.send(RESPONSE.encode())
 
 if __name__ == "__main__":
     main()

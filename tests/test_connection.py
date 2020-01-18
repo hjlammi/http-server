@@ -117,10 +117,11 @@ def test_connection_receives_longer_request_in_two_chunks():
 
     assert connection.recv_buffer == b'longer t'
 
-def test_connection_changes_state_to_sending_after_receiving_the_whole_request():
+def test_callback_is_called_with_connection_as_parameter_after_whole_request_is_received():
     connection = Connection(ADDR, fake_socket)
-    connection.receive(Mock(), BUFFER_SIZE)
+    fake_callback = Mock()
+    connection.receive(fake_callback, BUFFER_SIZE)
     fake_socket.send_buffer = b'\r\n\r\n'
     connection.update()
 
-    assert connection.state == Connection.SENDING_RESPONSE
+    fake_callback.assert_called_with(connection)
