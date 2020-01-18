@@ -53,7 +53,7 @@ def main():
 def request_received_callback(connection):
     connection.send(RESPONSE.encode())
 
-def connection_closed_callback():
+def connection_closed_callback(socket):
     pass
 
 if __name__ == "__main__":

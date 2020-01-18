@@ -32,9 +32,12 @@ class Connection:
     def update(self):
         if (self.state == Connection.RECEIVING_REQUEST):
             received_bytes = self.socket.recv(self.buffer_size)
-            self.recv_buffer += received_bytes
-            if received_bytes == b'\r\n\r\n':
-                self.request_received_callback(self)
+            if received_bytes:
+                self.recv_buffer += received_bytes
+                if received_bytes == b'\r\n\r\n':
+                    self.request_received_callback(self)
+            else:
+                self.close()
         elif (self.state == Connection.SENDING_RESPONSE):
             response = self.send_buffer
             len_bytes_sent = self.socket.send(response)
@@ -43,3 +46,4 @@ class Connection:
     def close(self):
         self.state = Connection.CLOSED
         self.socket.close()
+        self.connection_closed_callback(self.socket)
