@@ -4,7 +4,7 @@ class Connection:
     SENDING_RESPONSE = 'SENDING_RESPONSE'
     CLOSED = 'CLOSED'
 
-    def __init__(self, address, socket):
+    def __init__(self, address, socket, connection_closed_callback):
         self.address = address
         self.socket = socket
         self.data = b''
@@ -12,6 +12,7 @@ class Connection:
         self.recv_buffer = b''
         self.buffer_size = 1024
         self.request_received_callback = None
+        self.connection_closed_callback = connection_closed_callback
         self.state = None
 
         self.socket.setblocking(False)
