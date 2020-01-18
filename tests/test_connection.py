@@ -87,10 +87,10 @@ def test_connection_stores_buffer_size_when_starting_to_receive_request():
 
 def test_connection_stores_callback_when_starting_to_receive_request():
     connection = Connection(ADDR, fake_socket)
-    fake_callback = Mock()
-    connection.receive(fake_callback, BUFFER_SIZE)
+    received_callback = Mock()
+    connection.receive(received_callback, BUFFER_SIZE)
 
-    assert connection.request_received_callback == fake_callback
+    assert connection.request_received_callback == received_callback
 
 def test_connection_changes_state_to_receiving_request_when_receive_called():
     connection = Connection(ADDR, fake_socket)
@@ -125,9 +125,9 @@ def test_connection_receives_longer_request_in_two_chunks():
 
 def test_callback_is_called_with_connection_as_parameter_after_whole_request_is_received():
     connection = Connection(ADDR, fake_socket)
-    fake_callback = Mock()
-    connection.receive(fake_callback, BUFFER_SIZE)
+    received_callback = Mock()
+    connection.receive(received_callback, BUFFER_SIZE)
     fake_socket.send_buffer = b'\r\n\r\n'
     connection.update()
 
-    fake_callback.assert_called_with(connection)
+    received_callback.assert_called_with(connection)
