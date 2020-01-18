@@ -67,6 +67,12 @@ def test_update_called_twice_sends_the_whole_response():
     assert connection.send_buffer == b''
     assert fake_socket.recv_buffer == b'testing'
 
+def test_state_is_changed_to_closed_when_close_is_called():
+    connection = Connection(ADDR, fake_socket)
+    connection.close()
+
+    assert connection.state == Connection.CLOSED
+
 def test_cannot_send_after_connection_is_closed():
     connection = Connection(ADDR, fake_socket)
     connection.close()
