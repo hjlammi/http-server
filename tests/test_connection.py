@@ -159,3 +159,11 @@ def test_connection_is_closed_after_the_whole_response_is_sent():
     connection.update()
 
     close_callback.assert_called_with(connection.socket)
+
+def test_connection_updates_raises_error_if_socket_does_not_send_anything():
+    connection = Connection(ADDR, fake_socket, Mock())
+    connection.send_buffer = b''
+    connection.state = Connection.SENDING_RESPONSE
+
+    with pytest.raises(Exception, match='Socket connection broken'):
+        connection.update()

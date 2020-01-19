@@ -40,6 +40,8 @@ class Connection:
         elif (self.state == Connection.SENDING_RESPONSE):
             response = self.send_buffer
             len_bytes_sent = self.socket.send(response)
+            if not len_bytes_sent:
+                raise Exception('Socket connection broken')
             self.send_buffer = response[len_bytes_sent:]
             if not self.send_buffer:
                 self.close()
