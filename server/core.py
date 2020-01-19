@@ -29,19 +29,17 @@ def main():
                 print('accepted connection from', addr)
                 connection = Connection(addr, sock, connection_closed_callback)
                 connection.receive(request_received_callback, 1024)
-                events = selectors.EVENT_READ | selectors.EVENT_WRITE
+                events = selectors.EVENT_READ
                 sel.register(sock, events, data=connection)
             else:
-                connection = key.data
-                if mask & selectors.EVENT_READ and connection.state == Connection.RECEIVING_REQUEST:
-                    connection.update()
-                if mask & selectors.EVENT_WRITE and connection.state == Connection.SENDING_RESPONSE:
-                    connection.socket.send(RESPONSE.encode())  # Should be ready to write
-                    connection.close()
+                connection.update()
 
 # Starts sending response to the client after the whole request has been received
 def request_received_callback(connection):
     connection.send(RESPONSE.encode())
+    events = selectors.EVENT_WRITE
+    sel.unregister(connection.socket)
+    sel.register(connection.socket, events, data=connection)
 
 # Unregisters socket after the connection has been closed
 def connection_closed_callback(socket):
