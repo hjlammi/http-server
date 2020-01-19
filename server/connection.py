@@ -7,7 +7,6 @@ class Connection:
     def __init__(self, address, socket, connection_closed_callback):
         self.address = address
         self.socket = socket
-        self.data = b''
         self.send_buffer = b''
         self.recv_buffer = b''
         self.buffer_size = 1024
