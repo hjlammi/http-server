@@ -38,8 +38,7 @@ def main():
 def request_received_callback(connection):
     connection.send(RESPONSE.encode())
     events = selectors.EVENT_WRITE
-    sel.unregister(connection.socket)
-    sel.register(connection.socket, events, data=connection)
+    sel.modify(connection.socket, events, data=connection)
 
 # Unregisters socket after the connection has been closed
 def connection_closed_callback(socket):
