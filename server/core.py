@@ -32,6 +32,7 @@ def main():
                 events = selectors.EVENT_READ
                 sel.register(sock, events, data=connection)
             else:
+                connection = key.data
                 connection.update()
 
 # Starts sending response to the client after the whole request has been received
