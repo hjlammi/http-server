@@ -7,6 +7,7 @@ verify_ssl = true
 pytest = "*"
 
 [packages]
+lark-parser = "*"
 
 [requires]
 python_version = "3.6"
