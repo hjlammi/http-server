@@ -1,9 +1,11 @@
 from lark import Lark, Transformer, v_args
 
 grammar = r'''
-    request: METHOD URI VERSION
+    request: startline
 
-    METHOD: "GET" | "PUT"
+    startline: METHOD URI VERSION
+
+    METHOD: "GET"
     URI: /\/[a-zA-Z0-9\/.]+/
     VERSION: "HTTP/1.1"
 
@@ -19,9 +21,15 @@ def parse_request(request):
 
 class TreeToRequest(Transformer):
     @v_args(inline=True)
-    def request(self, method, uri, version):
+    def request(self, tree):
+        return tree
+
+    @v_args(inline=True)
+    def startline(self, method, uri, version):
         return dict(
-            method = method.value,
-            uri = uri.value,
-            http_version = version.value
+            startline = dict(
+                method = method.value,
+                uri = uri.value,
+                http_version = version.value
+            )
         )
