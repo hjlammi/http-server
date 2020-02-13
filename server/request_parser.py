@@ -28,9 +28,7 @@ class TreeToRequest(Transformer):
     @v_args(inline=True)
     def startline(self, method, ws1, uri, ws2, version, cr, lf):
         return dict(
-            startline = dict(
-                method = method.value,
-                uri = uri.value,
-                http_version = version.value
-            )
+            method = method.value,
+            uri = uri.value,
+            http_version = version.value
         )
