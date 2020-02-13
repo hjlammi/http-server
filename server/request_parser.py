@@ -3,14 +3,15 @@ from lark import Lark, Transformer, v_args
 grammar = r'''
     request: startline
 
-    startline: METHOD URI VERSION
+    startline: METHOD WS URI WS VERSION CR LF
 
     METHOD: "GET"
     URI: /\/[a-zA-Z0-9\/.]+/
     VERSION: "HTTP/1.1"
 
     %import common.WS
-    %ignore WS
+    %import common.CR
+    %import common.LF
 '''
 
 request_parser = Lark(grammar, start='request')
@@ -25,7 +26,7 @@ class TreeToRequest(Transformer):
         return tree
 
     @v_args(inline=True)
-    def startline(self, method, uri, version):
+    def startline(self, method, ws1, uri, ws2, version, cr, lf):
         return dict(
             startline = dict(
                 method = method.value,
