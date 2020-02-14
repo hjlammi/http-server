@@ -1,4 +1,4 @@
-from server.request_parser import parse_request
+from server.request_parser import parse_request, tuple_to_dict
 import pytest
 
 def test_parse_request_gets_GET_method_from_the_request():
@@ -30,3 +30,22 @@ def test_parse_request_parses_accept_header_from_the_request():
     result = parse_request(request_line)
 
     assert result['headers']['accept'] == 'text/html'
+
+def test_parse_request_parses_two_headers_from_the_request():
+    request_line = 'GET /path/to/example.com HTTP/1.1\r\nHost: www.w3.org\r\naccept: text/html\r\n'
+    result = parse_request(request_line)
+
+    assert result['headers']['accept'] == 'text/html'
+    assert result['headers']['Host'] == 'www.w3.org'
+
+def test_headers_to_dict_forms_a_dict_of_one_header_from_a_tuple_of_one_headers():
+    headers = ({'accept': 'text/html'},)
+    result = tuple_to_dict(headers)
+
+    assert result == {'accept': 'text/html'}
+
+def test_headers_to_dict_forms_a_dict_of_two_headers_from_a_tuple_of_two_headers():
+    headers = ({'accept': 'text/html'}, {'Host': 'www.w3.org'})
+    result = tuple_to_dict(headers)
+
+    assert result == {'accept': 'text/html', 'Host': 'www.w3.org'}

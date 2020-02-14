@@ -1,7 +1,7 @@
 from lark import Lark, Transformer, v_args
 
 grammar = r'''
-    request: startline headers?
+    request: startline headers*
 
     startline: METHOD WS URI WS VERSION CR LF
     headers: HEADER_KEY":" WS HEADER_VALUE CR LF
@@ -10,7 +10,7 @@ grammar = r'''
     URI: /\/[a-zA-Z0-9\/.]+/
     VERSION: "HTTP/1.1"
     HEADER_KEY: /[a-zA-Z0-9]+/
-    HEADER_VALUE: /[a-zA-Z0-9\/]+/
+    HEADER_VALUE: /[a-zA-Z0-9\/\/.]+/
 
     %import common.WS
     %import common.CR
@@ -25,12 +25,12 @@ def parse_request(request):
 
 class TreeToRequest(Transformer):
     @v_args(inline=True)
-    def request(self, startline, headers=None):
+    def request(self, startline, *headers):
         return {
             "method": startline["method"],
             "uri": startline["uri"],
             "http_version": startline["http_version"],
-            "headers": headers
+            "headers": tuple_to_dict(headers)
         }
 
     @v_args(inline=True)
@@ -44,5 +44,11 @@ class TreeToRequest(Transformer):
     @v_args(inline=True)
     def headers(self, header_key, ws, header_value, cr, lf):
         return {
-            header_key: header_value
+            header_key.value: header_value.value
         }
+
+def tuple_to_dict(headers):
+    headers_in_dict = {}
+    for header in headers:
+        headers_in_dict = {**headers_in_dict, **header}
+    return headers_in_dict
