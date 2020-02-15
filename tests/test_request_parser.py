@@ -1,4 +1,4 @@
-from server.request_parser import parse_request, tuple_to_dict
+from server.request_parser import parse_request
 import pytest
 
 def test_parse_request_gets_GET_method_from_the_request():
@@ -37,18 +37,6 @@ def test_parse_request_parses_two_headers_from_the_request():
 
     assert result.headers['accept'] == 'text/html'
     assert result.headers['Host'] == 'www.w3.org'
-
-def test_headers_to_dict_forms_a_dict_of_one_header_from_a_tuple_of_one_headers():
-    headers = ({'accept': 'text/html'},)
-    result = tuple_to_dict(headers)
-
-    assert result == {'accept': 'text/html'}
-
-def test_headers_to_dict_forms_a_dict_of_two_headers_from_a_tuple_of_two_headers():
-    headers = ({'accept': 'text/html'}, {'Host': 'www.w3.org'})
-    result = tuple_to_dict(headers)
-
-    assert result == {'accept': 'text/html', 'Host': 'www.w3.org'}
 
 # # RFC2616 4.1. Message Types
 def test_parse_request_should_not_throw_if_empty_lines_before_startline():
