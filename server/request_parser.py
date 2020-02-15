@@ -11,6 +11,9 @@ grammar = r'''
     VERSION: "HTTP/1.1"
     HEADER_KEY: /[a-zA-Z0-9]+/
     HEADER_VALUE: /[a-zA-Z0-9\/\/.]+/
+    EMPTY_LINE: CR LF
+
+    %ignore EMPTY_LINE
 
     %import common.WS
     %import common.CR

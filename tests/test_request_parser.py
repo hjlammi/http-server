@@ -49,3 +49,8 @@ def test_headers_to_dict_forms_a_dict_of_two_headers_from_a_tuple_of_two_headers
     result = tuple_to_dict(headers)
 
     assert result == {'accept': 'text/html', 'Host': 'www.w3.org'}
+
+# # RFC2616 4.1. Message Types
+def test_parse_request_should_not_throw_if_empty_lines_before_startline():
+    request_line = '\r\n\r\nGET /path/to/example.com HTTP/1.1\r\naccept: text/html\r\n'
+    parse_request(request_line)
