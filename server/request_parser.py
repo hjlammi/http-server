@@ -1,4 +1,5 @@
 from lark import Lark, Transformer, v_args
+from .request import Request
 
 grammar = r'''
     request: startline headers*
@@ -29,12 +30,12 @@ def parse_request(request):
 class TreeToRequest(Transformer):
     @v_args(inline=True)
     def request(self, startline, *headers):
-        return {
-            "method": startline["method"],
-            "uri": startline["uri"],
-            "http_version": startline["http_version"],
-            "headers": tuple_to_dict(headers)
-        }
+        return Request(
+            startline["method"],
+            startline["uri"],
+            startline["http_version"],
+            tuple_to_dict(headers)
+        )
 
     @v_args(inline=True)
     def startline(self, method, ws1, uri, ws2, version, cr, lf):
