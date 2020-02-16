@@ -1,4 +1,4 @@
-from lark import Lark, Transformer, v_args
+from lark import Lark, Transformer, v_args, Discard
 from .request import Request
 
 grammar = r'''
@@ -37,7 +37,7 @@ class TreeToRequest(Transformer):
             startline["uri"],
             startline["http_version"],
             headers[0] if headers else None,
-            headers[2] if (headers and len(headers) == 3) else None
+            headers[1] if (headers and len(headers) == 2) else None
         )
 
     @v_args(inline=True)
@@ -59,7 +59,7 @@ class TreeToRequest(Transformer):
 
     @v_args(inline=True)
     def EMPTY_LINE(self, *args):
-        pass
+        raise Discard
 
     @v_args(inline=True)
     def body(self, body, cr, lf):
