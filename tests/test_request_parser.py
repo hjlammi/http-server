@@ -41,6 +41,12 @@ def test_parse_request_parses_two_headers_from_the_request():
     request_line = 'GET /path/to/example.com HTTP/1.1\r\nHost: www.w3.org\r\naccept: text/html\r\n\r\n'
     result = parse_request(request_line)
 
+    assert len(result.headers) == 2
+
+def test_parse_request_parses_accept_and_host_headers_from_the_request():
+    request_line = 'GET /path/to/example.com HTTP/1.1\r\nHost: www.w3.org\r\naccept: text/html\r\n\r\n'
+    result = parse_request(request_line)
+
     assert result.headers['accept'] == 'text/html'
     assert result.headers['Host'] == 'www.w3.org'
 
