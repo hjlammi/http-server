@@ -2,7 +2,7 @@ from lark import Lark, Transformer, v_args
 from .request import Request
 
 grammar = r'''
-    request: startline headers*
+    request: startline headers* EMPTY_LINE
 
     startline: METHOD WS URI WS VERSION CR LF
     headers: (headers)* HEADER_KEY":" WS HEADER_VALUE CR LF
@@ -53,3 +53,7 @@ class TreeToRequest(Transformer):
             return headers
         else:
             return {header_args[0].value: header_args[2].value}
+
+    @v_args(inline=True)
+    def EMPTY_LINE(self, *args):
+        pass
