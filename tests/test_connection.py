@@ -123,15 +123,6 @@ def test_connection_receives_longer_request_in_two_chunks():
 
     assert connection.recv_buffer == b'longer t'
 
-def test_callback_is_called_with_connection_as_parameter_after_whole_request_is_received():
-    connection = Connection(ADDR, fake_socket, Mock())
-    received_callback = Mock()
-    connection.receive(received_callback, BUFFER_SIZE)
-    fake_socket.send_buffer = b'\r\n\r\n'
-    connection.update()
-
-    received_callback.assert_called_with(connection)
-
 def test_connection_is_closed_if_nothing_received_from_the_client():
     close_callback = Mock()
     connection = Connection(ADDR, fake_socket, close_callback)
@@ -141,12 +132,11 @@ def test_connection_is_closed_if_nothing_received_from_the_client():
 
     close_callback.assert_called_with(connection.socket)
 
-def test_received_callback_is_called_after_whole_request_is_received():
+def test_received_callback_is_called_with_connection_as_parameter_after_whole_request_is_received():
     connection = Connection(ADDR, fake_socket, Mock())
     received_callback = Mock()
-    connection.receive(received_callback, BUFFER_SIZE)
-    fake_socket.send_buffer = b't \r\n\r\n'
-    connection.update()
+    connection.receive(received_callback, 70)
+    fake_socket.send_buffer = b'GET /path/to/example.com HTTP/1.1\r\n\r\n'
     connection.update()
 
     received_callback.assert_called_with(connection)

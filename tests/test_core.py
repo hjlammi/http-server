@@ -11,5 +11,5 @@ def test_main():
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock2:
             sock2.settimeout(1)
             sock2.connect((HOST, PORT))
-            sock2.sendall(b'\r\n\r\n')
+            sock2.sendall(b'GET /path/to/example.com HTTP/1.1\r\n\r\n')
             data = sock2.recv(1024)
