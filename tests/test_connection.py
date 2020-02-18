@@ -157,3 +157,15 @@ def test_connection_updates_raises_error_if_socket_does_not_send_anything():
 
     with pytest.raises(Exception, match='Socket connection broken'):
         connection.update()
+
+def test_parsed_request_is_stored_in_the_connection():
+    connection = Connection(ADDR, fake_socket, Mock())
+    buffer_size = 100
+    connection.receive(Mock(), buffer_size)
+    fake_socket.send_buffer = b'GET /path/to/example.com HTTP/1.1\r\nHost: www.w3.org\r\naccept: text/html\r\n\r\n'
+    connection.update()
+
+    assert connection.parsed_request.method == 'GET'
+    assert connection.parsed_request.uri == '/path/to/example.com'
+    assert connection.parsed_request.http_version == 'HTTP/1.1'
+    assert connection.parsed_request.headers == {'Host': 'www.w3.org', 'accept': 'text/html'}

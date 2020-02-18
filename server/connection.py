@@ -1,3 +1,5 @@
+from server.request_parser import parse_request
+
 class Connection:
 
     RECEIVING_REQUEST = 'RECEIVING_REQUEST'
@@ -13,6 +15,7 @@ class Connection:
         self.request_received_callback = None
         self.connection_closed_callback = connection_closed_callback
         self.state = None
+        self.parsed_request = None
 
         self.socket.setblocking(False)
 
@@ -34,6 +37,8 @@ class Connection:
             if received_bytes:
                 self.recv_buffer += received_bytes
                 if b'\r\n\r\n' in self.recv_buffer:
+                    request_str = self.recv_buffer.decode("utf-8")
+                    self.parsed_request = parse_request(request_str)
                     self.request_received_callback(self)
             else:
                 self.close()
