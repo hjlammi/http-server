@@ -4,17 +4,14 @@ from .request import Request
 grammar = r'''
     request: startline headers*
 
-    startline: METHOD WS URI WS VERSION CR LF
-    headers: (headers)* HEADER_KEY":" WS HEADER_VALUE CR? LF?
+    startline: METHOD WS URI WS VERSION (CR LF)?
+    headers: (headers)* HEADER_KEY":" WS HEADER_VALUE (CR LF)?
 
     METHOD: "GET"
     URI: /\/[a-zA-Z0-9\/.]+/
     VERSION: "HTTP/1.1"
     HEADER_KEY: /[a-zA-Z0-9]+/
     HEADER_VALUE: /[a-zA-Z0-9\/\/.]+/
-    EMPTY_LINE: CR LF
-
-    %ignore EMPTY_LINE
 
     %import common.WS
     %import common.CR
@@ -39,11 +36,11 @@ class TreeToRequest(Transformer):
         )
 
     @v_args(inline=True)
-    def startline(self, method, ws1, uri, ws2, version, cr, lf):
+    def startline(self, *startline_args):
         return dict(
-            method = method.value,
-            uri = uri.value,
-            http_version = version.value
+            method = startline_args[0].value,
+            uri = startline_args[2].value,
+            http_version = startline_args[4].value,
         )
 
     @v_args(inline=True)
@@ -54,7 +51,3 @@ class TreeToRequest(Transformer):
             return headers
         else:
             return {header_args[0].value: header_args[2].value}
-
-    @v_args(inline=True)
-    def EMPTY_LINE(self, *args):
-        raise Discard

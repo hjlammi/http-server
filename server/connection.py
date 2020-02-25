@@ -38,7 +38,8 @@ class Connection:
                 self.recv_buffer += received_bytes
                 if b'\r\n\r\n' in self.recv_buffer:
                     request_str = self.recv_buffer.decode("utf-8")
-                    self.parsed_request = parse_request(request_str)
+                    startline_and_headers = request_str.rsplit('\r\n\r\n')
+                    self.parsed_request = parse_request(startline_and_headers[0])
                     self.request_received_callback(self)
             else:
                 self.close()
