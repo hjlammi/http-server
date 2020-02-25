@@ -49,8 +49,3 @@ def test_parse_request_parses_accept_and_host_headers_from_the_request():
 
     assert request.headers['accept'] == 'text/html'
     assert request.headers['Host'] == 'www.w3.org'
-
-# # RFC2616 4.1. Message Types
-# def test_parse_request_should_not_throw_if_empty_lines_before_startline():
-#     request_string = '\r\n\r\nGET /path/to/example.com HTTP/1.1\r\naccept: text/html\r\n\r\n'
-#     parse_request(request_string)
