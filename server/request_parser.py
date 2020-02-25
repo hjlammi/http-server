@@ -58,7 +58,3 @@ class TreeToRequest(Transformer):
     @v_args(inline=True)
     def EMPTY_LINE(self, *args):
         raise Discard
-
-    @v_args(inline=True)
-    def body(self, body, cr, lf):
-        return body.value
