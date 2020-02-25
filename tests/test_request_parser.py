@@ -51,13 +51,6 @@ def test_parse_request_parses_accept_and_host_headers_from_the_request():
     assert request.headers['Host'] == 'www.w3.org'
 
 # # RFC2616 4.1. Message Types
-def test_parse_request_should_not_throw_if_empty_lines_before_startline():
-    request_string = '\r\n\r\nGET /path/to/example.com HTTP/1.1\r\naccept: text/html\r\n\r\n'
-    parse_request(request_string)
-
-@pytest.mark.focus
-def test_parse_request_parses_two_headers_from_the_request():
-    request_string = 'GET /path/to/example.com HTTP/1.1\r\nHost: www.w3.org\r\naccept: text/html\r\n\r\n<h1>hello</h1>\r\n'
-    request = parse_request(request_string)
-
-    assert request.body == '<h1>hello</h1>'
+# def test_parse_request_should_not_throw_if_empty_lines_before_startline():
+#     request_string = '\r\n\r\nGET /path/to/example.com HTTP/1.1\r\naccept: text/html\r\n\r\n'
+#     parse_request(request_string)

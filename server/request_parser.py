@@ -2,11 +2,10 @@ from lark import Lark, Transformer, v_args, Discard
 from .request import Request
 
 grammar = r'''
-    request: startline headers* EMPTY_LINE body?
+    request: startline headers*
 
     startline: METHOD WS URI WS VERSION CR LF
-    headers: (headers)* HEADER_KEY":" WS HEADER_VALUE CR LF
-    body: BODY CR LF
+    headers: (headers)* HEADER_KEY":" WS HEADER_VALUE CR? LF?
 
     METHOD: "GET"
     URI: /\/[a-zA-Z0-9\/.]+/
@@ -14,7 +13,6 @@ grammar = r'''
     HEADER_KEY: /[a-zA-Z0-9]+/
     HEADER_VALUE: /[a-zA-Z0-9\/\/.]+/
     EMPTY_LINE: CR LF
-    BODY: /[a-zA-Z0-9<>\/]+/
 
     %ignore EMPTY_LINE
 
