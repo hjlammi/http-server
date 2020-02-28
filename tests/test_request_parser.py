@@ -50,16 +50,8 @@ def test_parse_request_parses_accept_and_host_headers_from_the_request():
     assert request.headers['accept'] == 'text/html'
     assert request.headers['Host'] == 'www.w3.org'
 
-def test_headers():
-    request_string = 'GET /path/to/example.com HTTP/1.1\r\nHost: www.w3.org\r\naccept: text/html'
-    request = parse_request(request_string)
-
-    assert request.headers['accept'] == 'text/html'
-    assert request.headers['Host'] == 'www.w3.org'
-
-def test_parse_request_parses_accept_host_and_content_length_headers_from_the_request():
+def test_parse_request_parses_content_length_headers_from_the_request():
     request_string = 'GET /path/to/example.com HTTP/1.1\r\nHost: www.w3.org\r\naccept: text/html\r\ncontent-length: 4'
     request = parse_request(request_string)
 
-    assert request.headers['accept'] == 'text/html'
-    assert request.headers['Host'] == 'www.w3.org'
+    assert request.headers['content-length'] == '4'
