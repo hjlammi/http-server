@@ -3,6 +3,7 @@ from server.request_parser import parse_request
 class Connection:
 
     RECEIVING_REQUEST = 'RECEIVING_REQUEST'
+    RECEIVING_BODY = 'RECEIVING_BODY'
     SENDING_RESPONSE = 'SENDING_RESPONSE'
     CLOSED = 'CLOSED'
 
@@ -38,6 +39,7 @@ class Connection:
             if received_bytes:
                 self.recv_buffer += received_bytes
                 if b'\r\n\r\n' in self.recv_buffer:
+                    self.state = Connection.RECEIVING_BODY
                     request_str = self.recv_buffer
                     split_request = request_str.split(b'\r\n\r\n')
                     self.parsed_request = parse_request(split_request[0].decode('utf-8'))
@@ -46,9 +48,20 @@ class Connection:
                             content_length = int(self.parsed_request.headers['content-length'])
                             body = split_request[1]
                             self.request_body = body[:content_length]
-                    self.request_received_callback(self)
+                        else:
+                            # No content-length provided so we are not interested in message body
+                            self.request_received_callback(self)
+                    else:
+                        # No headers, so we are not interested the message body
+                        self.request_received_callback(self)
             else:
                 self.close()
+        elif (self.state == Connection.RECEIVING_BODY):
+            read_req_body_len = len(self.request_body)
+            read_capacity_left = int(self.parsed_request.headers['content-length']) - read_req_body_len
+            received_bytes = self.socket.recv(self.buffer_size)
+            if received_bytes:
+                self.request_body += received_bytes[:read_capacity_left]
         elif (self.state == Connection.SENDING_RESPONSE):
             response = self.send_buffer
             len_bytes_sent = self.socket.send(response)

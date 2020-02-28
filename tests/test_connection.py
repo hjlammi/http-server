@@ -196,3 +196,73 @@ def test_body_is_read_only_the_amount_of_content_length():
     connection.update()
 
     assert connection.request_body == b'tes'
+
+def test_request_received_callback_called_after_startline_and_headers_read_but_body_is_not():
+    connection = Connection(ADDR, fake_socket, Mock())
+    buffer_size = 56
+    received_callback = Mock()
+    connection.receive(received_callback, buffer_size)
+    fake_socket.send_buffer = b'GET /path/to/example.com HTTP/1.1\r\ncontent-length: 4\r\n\r\ntest'
+    connection.update()
+
+    assert connection.state == Connection.RECEIVING_BODY
+
+def test_update_reads_request_body_after_headers_received():
+    connection = Connection(ADDR, fake_socket, Mock())
+    buffer_size = 56
+    received_callback = Mock()
+    connection.receive(received_callback, buffer_size)
+    fake_socket.send_buffer = b'GET /path/to/example.com HTTP/1.1\r\ncontent-length: 4\r\n\r\ntest'
+    connection.update()
+    connection.update()
+
+    assert connection.request_body == b'test'
+
+def test_update_reads_longer_request_body_after_headers_received():
+    connection = Connection(ADDR, fake_socket, Mock())
+    buffer_size = 56
+    received_callback = Mock()
+    connection.receive(received_callback, buffer_size)
+    fake_socket.send_buffer = b'GET /path/to/example.com HTTP/1.1\r\ncontent-length: 105\r\n\r\nthis is a very long request body that will be read in two parts because it is longer than the buffer size'
+    connection.update()
+    connection.update()
+    connection.update()
+
+    assert connection.request_body == b'this is a very long request body that will be read in two parts because it is longer than the buffer size'
+
+def test_part_of_the_body_read_when_headers_and_rest_with_another_update_call():
+    connection = Connection(ADDR, fake_socket, Mock())
+    buffer_size = 57
+    received_callback = Mock()
+    connection.receive(received_callback, buffer_size)
+    fake_socket.send_buffer = b'GET /path/to/example.com HTTP/1.1\r\ncontent-length: 4\r\n\r\ntest'
+    connection.update()
+    assert connection.request_body == b't'
+
+    connection.update()
+    assert connection.request_body == b'test'
+
+def test_body_is_not_read_as_a_whole_because_content_length_is_shorter():
+    connection = Connection(ADDR, fake_socket, Mock())
+    buffer_size = 57
+    received_callback = Mock()
+    connection.receive(received_callback, buffer_size)
+    fake_socket.send_buffer = b'GET /path/to/example.com HTTP/1.1\r\ncontent-length: 4\r\n\r\ntesting a bit longer body that is not read in its entirety'
+    connection.update()
+    connection.update()
+    assert connection.request_body == b'test'
+
+def test_body_is_not_read_as_a_whole_because_content_length_is_shorter_for_longer_message():
+    connection = Connection(ADDR, fake_socket, Mock())
+    buffer_size = 58
+    received_callback = Mock()
+    connection.receive(received_callback, buffer_size)
+    fake_socket.send_buffer = b'GET /path/to/example.com HTTP/1.1\r\ncontent-length: 60\r\n\r\ntesting a somewhat longer body that is not read in its entirety'
+    connection.update()
+    assert connection.request_body == b't'
+
+    connection.update()
+    assert connection.request_body == b'testing a somewhat longer body that is not read in its enti'
+
+    connection.update()
+    assert connection.request_body == b'testing a somewhat longer body that is not read in its entir'
