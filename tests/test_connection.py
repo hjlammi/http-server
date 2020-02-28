@@ -287,5 +287,13 @@ def test_request_received_callback_is_called_after_a_longer_body_is_read():
     connection.update()
     connection.update()
     received_callback.assert_called_with(connection)
-# test that request_received_callback is called after body received
-# test in receiving body if no received bytes -> close
+
+def test_request_received_callback_is_called_when_no_body():
+    connection = Connection(ADDR, fake_socket, Mock())
+    buffer_size = 57
+    received_callback = Mock()
+    connection.receive(received_callback, buffer_size)
+    fake_socket.send_buffer = b'GET /path/to/example.com HTTP/1.1\r\ncontent-length: 60\r\n\r\n'
+    connection.update()
+    connection.update()
+    received_callback.assert_called_with(connection)

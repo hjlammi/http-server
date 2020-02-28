@@ -39,12 +39,12 @@ class Connection:
             if received_bytes:
                 self.recv_buffer += received_bytes
                 if b'\r\n\r\n' in self.recv_buffer:
-                    self.state = Connection.RECEIVING_BODY
                     request_str = self.recv_buffer
                     split_request = request_str.split(b'\r\n\r\n')
                     self.parsed_request = parse_request(split_request[0].decode('utf-8'))
                     if self.parsed_request.headers is not None:
                         if 'content-length' in self.parsed_request.headers:
+                            self.state = Connection.RECEIVING_BODY
                             content_length = int(self.parsed_request.headers['content-length'])
                             body = split_request[1]
                             self.request_body = body[:content_length]
@@ -57,8 +57,11 @@ class Connection:
             else:
                 self.close()
         elif (self.state == Connection.RECEIVING_BODY):
-            read_req_body_len = len(self.request_body)
-            read_capacity_left = int(self.parsed_request.headers['content-length']) - read_req_body_len
+            content_length = int(self.parsed_request.headers['content-length'])
+            read_capacity_left = content_length
+            if (self.request_body):
+                read_req_body_len = len(self.request_body)
+                read_capacity_left = int(self.parsed_request.headers['content-length']) - read_req_body_len
             received_bytes = self.socket.recv(self.buffer_size)
             if received_bytes:
                 self.request_body += received_bytes[:read_capacity_left]
@@ -67,6 +70,8 @@ class Connection:
                 # Enough read of the body
                 if (read_req_body_len == content_length):
                     self.request_received_callback(self)
+            else:
+                self.request_received_callback(self)
         elif (self.state == Connection.SENDING_RESPONSE):
             response = self.send_buffer
             len_bytes_sent = self.socket.send(response)
