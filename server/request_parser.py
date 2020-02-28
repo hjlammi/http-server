@@ -10,7 +10,7 @@ grammar = r'''
     METHOD: "GET"
     URI: /\/[a-zA-Z0-9\/.]+/
     VERSION: "HTTP/1.1"
-    HEADER_KEY: /[a-zA-Z0-9]+/
+    HEADER_KEY: /[a-zA-Z0-9\-]+/
     HEADER_VALUE: /[a-zA-Z0-9\/\/.]+/
 
     %import common.WS

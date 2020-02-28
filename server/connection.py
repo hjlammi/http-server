@@ -15,6 +15,7 @@ class Connection:
         self.request_received_callback = None
         self.connection_closed_callback = connection_closed_callback
         self.state = None
+        self.request_body = None
         self.parsed_request = None
 
         self.socket.setblocking(False)
@@ -37,9 +38,14 @@ class Connection:
             if received_bytes:
                 self.recv_buffer += received_bytes
                 if b'\r\n\r\n' in self.recv_buffer:
-                    request_str = self.recv_buffer.decode("utf-8")
-                    startline_and_headers = request_str.rsplit('\r\n\r\n')
-                    self.parsed_request = parse_request(startline_and_headers[0])
+                    request_str = self.recv_buffer
+                    split_request = request_str.split(b'\r\n\r\n')
+                    self.parsed_request = parse_request(split_request[0].decode('utf-8'))
+                    if self.parsed_request.headers is not None:
+                        if 'content-length' in self.parsed_request.headers:
+                            content_length = int(self.parsed_request.headers['content-length'])
+                            body = split_request[1]
+                            self.request_body = body[:content_length]
                     self.request_received_callback(self)
             else:
                 self.close()

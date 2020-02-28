@@ -169,3 +169,30 @@ def test_parsed_request_is_stored_in_the_connection():
     assert connection.parsed_request.uri == '/path/to/example.com'
     assert connection.parsed_request.http_version == 'HTTP/1.1'
     assert connection.parsed_request.headers == {'Host': 'www.w3.org', 'accept': 'text/html'}
+
+def test_no_request_body_read_without_content_length_header():
+    connection = Connection(ADDR, fake_socket, Mock())
+    buffer_size = 78
+    connection.receive(Mock(), buffer_size)
+    fake_socket.send_buffer = b'GET /path/to/example.com HTTP/1.1\r\nHost: www.w3.org\r\naccept: text/html\r\n\r\ntest'
+    connection.update()
+
+    assert connection.request_body == None
+
+def test_short_request_body_is_stored_in_the_connection():
+    connection = Connection(ADDR, fake_socket, Mock())
+    buffer_size = 100
+    connection.receive(Mock(), buffer_size)
+    fake_socket.send_buffer = b'GET /path/to/example.com HTTP/1.1\r\nHost: www.w3.org\r\naccept: text/html\r\ncontent-length: 4\r\n\r\ntest'
+    connection.update()
+
+    assert connection.request_body == b'test'
+
+def test_body_is_read_only_the_amount_of_content_length():
+    connection = Connection(ADDR, fake_socket, Mock())
+    buffer_size = 100
+    connection.receive(Mock(), buffer_size)
+    fake_socket.send_buffer = b'GET /path/to/example.com HTTP/1.1\r\nHost: www.w3.org\r\naccept: text/html\r\ncontent-length: 3\r\n\r\ntest'
+    connection.update()
+
+    assert connection.request_body == b'tes'
