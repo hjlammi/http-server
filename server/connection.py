@@ -62,6 +62,11 @@ class Connection:
             received_bytes = self.socket.recv(self.buffer_size)
             if received_bytes:
                 self.request_body += received_bytes[:read_capacity_left]
+                read_req_body_len = len(self.request_body)
+                content_length = int(self.parsed_request.headers['content-length'])
+                # Enough read of the body
+                if (read_req_body_len == content_length):
+                    self.request_received_callback(self)
         elif (self.state == Connection.SENDING_RESPONSE):
             response = self.send_buffer
             len_bytes_sent = self.socket.send(response)

@@ -266,3 +266,26 @@ def test_body_is_not_read_as_a_whole_because_content_length_is_shorter_for_longe
 
     connection.update()
     assert connection.request_body == b'testing a somewhat longer body that is not read in its entir'
+
+def test_request_received_callback_is_called_after_whole_body_is_read():
+    connection = Connection(ADDR, fake_socket, Mock())
+    buffer_size = 57
+    received_callback = Mock()
+    connection.receive(received_callback, buffer_size)
+    fake_socket.send_buffer = b'GET /path/to/example.com HTTP/1.1\r\ncontent-length: 4\r\n\r\ntest'
+    connection.update()
+    connection.update()
+    received_callback.assert_called_with(connection)
+
+def test_request_received_callback_is_called_after_a_longer_body_is_read():
+    connection = Connection(ADDR, fake_socket, Mock())
+    buffer_size = 58
+    received_callback = Mock()
+    connection.receive(received_callback, buffer_size)
+    fake_socket.send_buffer = b'GET /path/to/example.com HTTP/1.1\r\ncontent-length: 60\r\n\r\ntesting a somewhat longer body that is not read in its xxxxx'
+    connection.update()
+    connection.update()
+    connection.update()
+    received_callback.assert_called_with(connection)
+# test that request_received_callback is called after body received
+# test in receiving body if no received bytes -> close
