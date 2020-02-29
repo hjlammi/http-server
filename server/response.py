@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Any
 
 REASON_PHRASES = {
@@ -9,9 +9,19 @@ REASON_PHRASES = {
 @dataclass
 class Response:
     status_code: int
+    headers: List[str] = field(default_factory=list)
+    body: str = ''
     reason_phrase: str = 'OK'
     http_version: str = 'HTTP/1.1'
 
     def serialize(self):
         reason = REASON_PHRASES[self.status_code]
-        return f'{self.http_version} {self.status_code} {reason}\r\n'
+        response = f'{self.http_version} {self.status_code} {reason}\r\n'
+        if self.headers:
+            for header in self.headers:
+                response += header
+                response += '\r\n'
+        if self.body:
+            response += '\r\n'
+            response += self.body
+        return response
