@@ -55,8 +55,7 @@ def test_parse_request_parses_content_length_headers_from_the_request():
     request = parse_request(request_string)
 
     assert request.headers['content-length'] == '4'
-def test_request_message_from_browser():
+
+def test_parses_request_message_from_browser_without_raising_error():
     request_string = 'GET / HTTP/1.1\r\nConnection: keep-alive\r\naccept: text/html,*/*\r\nuser-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36\r\nhost: 127.0.0.1:8000'
     request = parse_request(request_string)
-
-    # assert request.headers['Connection'] == 'keep-alive'
