@@ -50,10 +50,10 @@ class Connection:
                             self.request_body = body[:content_length]
                         else:
                             # No content-length provided so we are not interested in message body
-                            self.request_received_callback(self)
+                            self.request_received_callback(self, self.parsed_request)
                     else:
                         # No headers, so we are not interested the message body
-                        self.request_received_callback(self)
+                        self.request_received_callback(self, self.parsed_request)
             else:
                 self.close()
         elif (self.state == Connection.RECEIVING_BODY):

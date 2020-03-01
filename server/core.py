@@ -31,8 +31,8 @@ def main():
                 connection.update()
 
 # Starts sending response to the client after the whole request has been received
-def request_received_callback(connection):
-    response = generate_response(connection.parsed_request)
+def request_received_callback(connection, request):
+    response = generate_response(request)
     connection.send(response)
     events = selectors.EVENT_WRITE
     sel.modify(connection.socket, events, data=connection)

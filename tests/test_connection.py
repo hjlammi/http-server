@@ -1,4 +1,5 @@
 from server.connection import Connection
+from server.request import Request
 from fake_socket import FakeSocket
 import pytest
 from unittest.mock import Mock
@@ -138,8 +139,9 @@ def test_received_callback_is_called_with_connection_as_parameter_after_whole_re
     connection.receive(received_callback, 70)
     fake_socket.send_buffer = b'GET /path/to/example.com HTTP/1.1\r\n\r\n'
     connection.update()
+    request = Request('GET', '/path/to/example.com', 'HTTP/1.1', None, None)
 
-    received_callback.assert_called_with(connection)
+    received_callback.assert_called_with(connection, request)
 
 def test_connection_is_closed_after_the_whole_response_is_sent():
     close_callback = Mock()
