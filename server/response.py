@@ -21,8 +21,8 @@ class Response:
             for header in self.headers:
                 response += header
                 response += '\r\n'
+        response += '\r\n'
         if self.body:
-            response += '\r\n'
             response += self.body
         response = response.encode()
         return response
