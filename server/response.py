@@ -3,7 +3,8 @@ from typing import List, Any
 
 REASON_PHRASES = {
     200: 'OK',
-    204: 'No Content'
+    204: 'No Content',
+    404: 'Not Found'
 }
 
 @dataclass

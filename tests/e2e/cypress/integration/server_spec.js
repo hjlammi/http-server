@@ -12,10 +12,17 @@ describe('server', function() {
     });
 
     it('receives 404 Not Found response from the server', function() {
-        cy.request('/notfound').as('response');
+        cy.request({
+            url:'/notfound',
+            failOnStatusCode: false
+        }).as('response');
         cy.get('@response').should((response) => {
             expect(response.statusText).to.equal('Not Found');
             expect(response.status).to.equal(404);
+        });
+        cy.visit({
+            url: 'http://127.0.0.1:8000/notfound',
+            failOnStatusCode: false
         });
         cy.contains('Page not found');
     });

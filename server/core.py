@@ -2,6 +2,7 @@ import socket
 import selectors
 from .connection import Connection
 from .response import Response
+from .generate_response import generate_response
 sel = selectors.DefaultSelector()
 
 HOST = "127.0.0.1"
@@ -31,12 +32,8 @@ def main():
 
 # Starts sending response to the client after the whole request has been received
 def request_received_callback(connection):
-    body = '<h1>jee</h1>\r\n'
-    content_type = 'Content-Type: text/html'
-    content_length = f'Content-Length: {len(body)}'
-    headers = [content_type, content_length]
-    response = Response(200, headers, body)
-    connection.send(response.serialize())
+    response = generate_response(connection.parsed_request)
+    connection.send(response)
     events = selectors.EVENT_WRITE
     sel.modify(connection.socket, events, data=connection)
 
