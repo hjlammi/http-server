@@ -26,4 +26,14 @@ describe('server', function() {
         });
         cy.contains('Page not found');
     });
+
+    it('lists the contents of the server on the root URI', function() {
+        cy.get('h1').should('contain', '/');
+        cy.get('a').should(($a) => {
+            expect($a).to.have.length(3);
+            expect($a.first()).to.contain('cat_pics/');
+            expect($a[1]).to.contain('random/');
+            expect($a.last()).to.contain('lorem_ipsum.txt');
+        });
+    });
 });

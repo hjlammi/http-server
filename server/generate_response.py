@@ -8,13 +8,15 @@ def generate_response(request, path_to_serve):
     headers = None
     if request.uri == '/':
         status_code = 200
+
+        if request.method == 'GET' or 'HEAD':
+            body = create_html_body(path_to_serve)
+            body += '\r\n'
+
         headers = [
             'Content-Type: text/html',
-            f'Content-Length: {len(BODY_SUCCESS)}'
+            f'Content-Length: {len(body)}'
         ]
-
-        if request.method == 'GET':
-            body = BODY_SUCCESS
     else:
         status_code = 404
         headers = [
@@ -22,7 +24,10 @@ def generate_response(request, path_to_serve):
             f'Content-Length: {len(BODY_NOT_FOUND)}'
         ]
         body = BODY_NOT_FOUND
-    response = Response(status_code, headers, body)
+    if request.method == 'GET':
+        response = Response(status_code, headers, body)
+    elif request.method == 'HEAD':
+        response = Response(status_code, headers, None)
     return response.serialize()
 
 def get_contents_from_dir(path):
@@ -38,3 +43,17 @@ def get_contents_from_dir(path):
     dirs.sort()
     dirs.extend(files)
     return dirs
+
+def create_html_body(path):
+    contents = get_contents_from_dir(path)
+    html = f'<h1>{path}</h1><table><tbody>'
+
+    for content in contents:
+        if "/" in content:
+            href = content[:-1]
+        else:
+            href = content
+        html += f'<tr><td><a href="{href}">{content}</a></td></tr>'
+
+    html += '</tbody></table>'
+    return html
