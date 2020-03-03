@@ -1,5 +1,6 @@
 import socket
 import selectors
+import sys
 from .connection import Connection
 from .response import Response
 from .generate_response import generate_response
@@ -9,6 +10,9 @@ HOST = "127.0.0.1"
 PORT = 8000
 
 def main():
+    # path to the directory to serve is given as a CLI parameter
+    global path_to_serve
+    path_to_serve = sys.argv[1]
     lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     lsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     lsock.bind((HOST, PORT))
@@ -32,7 +36,7 @@ def main():
 
 # Starts sending response to the client after the whole request has been received
 def request_received_callback(connection, request):
-    response = generate_response(request)
+    response = generate_response(request, path_to_serve)
     connection.send(response)
     events = selectors.EVENT_WRITE
     sel.modify(connection.socket, events, data=connection)
