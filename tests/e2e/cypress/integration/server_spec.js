@@ -41,6 +41,6 @@ describe('server', function() {
         cy.get('a').contains('lorem_ipsum.txt').click();
         cy.url().should('include', '/lorem_ipsum.txt');
         cy.get('h1').should('not.contain', 'Page not found');
-        cy.get('body').contains('Lorem ipsum dolor sit amet');
+        cy.get('body').contains('Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.\n');
     });
 });

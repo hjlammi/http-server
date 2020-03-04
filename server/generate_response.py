@@ -57,3 +57,8 @@ def create_html_body(path):
 
     html += '</tbody></table>'
     return html
+
+def read_file_contents(path_to_file):
+    with open(path_to_file) as file:
+        read_contents = file.read()
+        return read_contents
