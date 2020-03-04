@@ -62,3 +62,6 @@ def read_file_contents(path_to_file):
     with open(path_to_file) as file:
         read_contents = file.read()
         return read_contents
+
+def is_file(uri):
+    return uri[-1] != '/'

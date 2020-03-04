@@ -1,5 +1,5 @@
 from server.request import Request
-from server.generate_response import generate_response, get_contents_from_dir, create_html_body, read_file_contents
+from server.generate_response import *
 import pytest
 
 def test_generate_response_for_HEAD_request():
@@ -32,3 +32,9 @@ def test_read_text_file_contents():
     result = read_file_contents('tests/webroot/lorem_ipsum.txt')
 
     assert result == 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.\n'
+
+def test_text_file_is_a_file():
+    assert is_file('/lorem_ipsum.txt') == True
+
+def test_dir_is_not_a_file():
+    assert is_file('/cat_pics/') == False
