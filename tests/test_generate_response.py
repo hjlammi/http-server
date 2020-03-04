@@ -33,8 +33,11 @@ def test_read_text_file_contents():
 
     assert result == 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.\n'
 
-def test_text_file_is_a_file():
-    assert is_file('/lorem_ipsum.txt') == True
+def test_is_a_valid_resource():
+    assert is_a_valid_resource('tests/webroot/lorem_ipsum.txt') == True
 
-def test_dir_is_not_a_file():
-    assert is_file('/cat_pics/') == False
+def test_is_a_valid_directory():
+    assert is_a_valid_resource('tests/webroot/cat_pics') == True
+
+def test_is_not_a_valid_resource_as_it_does_not_exist():
+    assert is_a_valid_resource('tests/webroot/cat_pics.txt') == False

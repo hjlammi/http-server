@@ -1,4 +1,4 @@
-from os import scandir
+from os import scandir, path
 from .response import Response
 
 BODY_SUCCESS = '<h1>Hello World</h1>\r\n'
@@ -6,12 +6,17 @@ BODY_NOT_FOUND = '<h1>Page not found</h1>\r\n'
 def generate_response(request, path_to_serve):
     body = None
     headers = None
-    if request.uri == '/':
+
+    path_to_resource = path_to_serve + request.uri
+    if is_a_valid_resource(path_to_resource):
         status_code = 200
 
         if request.method == 'GET' or 'HEAD':
-            body = create_html_body(path_to_serve)
-            body += '\r\n'
+            if path.isfile(path_to_resource):
+                body = read_file_contents(path_to_resource)
+            else:
+                body = create_html_body(path_to_serve)
+                body += '\r\n'
 
         headers = [
             'Content-Type: text/html',
@@ -63,5 +68,10 @@ def read_file_contents(path_to_file):
         read_contents = file.read()
         return read_contents
 
-def is_file(uri):
-    return uri[-1] != '/'
+def is_a_valid_resource(path_to_resource):
+    if path.isfile(path_to_resource):
+        return True
+    elif path.isdir(path_to_resource):
+        return True
+    else:
+        return False
