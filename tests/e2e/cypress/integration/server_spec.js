@@ -37,7 +37,7 @@ describe('server', function() {
         });
     });
 
-    it('it shows lorem_ipsum.txt file\'s content', function() {
+    it('shows lorem_ipsum.txt file\'s content', function() {
         cy.get('a').contains('lorem_ipsum.txt').click();
         cy.url().should('include', '/lorem_ipsum.txt');
         cy.get('h1').should('not.contain', 'Page not found');
