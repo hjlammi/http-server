@@ -15,7 +15,7 @@ def generate_response(request, path_to_serve):
             if path.isfile(path_to_resource):
                 body = read_file_contents(path_to_resource)
             else:
-                body = create_html_body(path_to_serve)
+                body = list_dir_contents_in_html(path_to_serve)
                 body += '\r\n'
 
         headers = [
@@ -49,7 +49,7 @@ def get_contents_from_dir(path):
     dirs.extend(files)
     return dirs
 
-def create_html_body(path):
+def list_dir_contents_in_html(path):
     contents = get_contents_from_dir(path)
     html = f'<h1>{path}</h1><table><tbody>'
 

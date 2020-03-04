@@ -23,8 +23,8 @@ def test_get_contents_from_subdir():
 
     assert result == ['2janu.jpg', 'ella.jpg', 'janu.jpg']
 
-def test_create_html_body():
-    result = create_html_body('tests/webroot')
+def test_list_dir_contents_in_html():
+    result = list_dir_contents_in_html('tests/webroot')
 
     assert result == '<h1>tests/webroot</h1><table><tbody><tr><td><a href="cat_pics">cat_pics/</a></td></tr><tr><td><a href="random">random/</a></td></tr><tr><td><a href="lorem_ipsum.txt">lorem_ipsum.txt</a></td></tr></tbody></table>'
 
