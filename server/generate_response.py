@@ -15,7 +15,7 @@ def generate_response(request, path_to_serve):
             if path.isfile(path_to_resource):
                 body = read_file_contents(path_to_resource)
             else:
-                body = list_dir_contents_in_html(path_to_serve)
+                body = list_dir_contents_in_html(path_to_resource, path_to_serve)
                 body += '\r\n'
 
         headers = [
@@ -49,9 +49,10 @@ def get_contents_from_dir(path):
     dirs.extend(files)
     return dirs
 
-def list_dir_contents_in_html(path):
-    contents = get_contents_from_dir(path)
-    html = f'<h1>{path}</h1><table><tbody>'
+def list_dir_contents_in_html(path_to_resource, path_to_serve):
+    contents = get_contents_from_dir(path_to_resource)
+    relative_path = get_relative_path(path_to_resource, path_to_serve)
+    html = f'<h1>{relative_path}</h1><table><tbody>'
 
     for content in contents:
         if "/" in content:
@@ -75,3 +76,13 @@ def is_a_valid_resource(path_to_resource):
         return True
     else:
         return False
+
+def get_relative_path(path_to_resource, path_to_serve):
+    if path_to_serve.endswith('/'):
+        path_to_serve = path_to_serve[:-1]
+    if path_to_resource.endswith('/'):
+        path_to_resource = path_to_resource[:-1]
+    relative_path = path_to_resource.replace(path_to_serve, '')
+    if not relative_path:
+        relative_path = '/'
+    return relative_path

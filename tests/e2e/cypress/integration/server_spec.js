@@ -28,7 +28,7 @@ describe('server', function() {
     });
 
     it('lists the contents of the server on the root URI', function() {
-        cy.get('h1').should('contain', '/');
+        cy.get('h1').should('have.text', '/');
         cy.get('a').should(($a) => {
             expect($a).to.have.length(3);
             expect($a.first()).to.contain('cat_pics/');
@@ -42,5 +42,17 @@ describe('server', function() {
         cy.url().should('include', '/lorem_ipsum.txt');
         cy.get('h1').should('not.contain', 'Page not found');
         cy.get('body').contains('Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.\n');
+    });
+
+    it('list cat_pics dir\'s contents on the page', function() {
+        cy.get('a').contains('cat_pics').click();
+        cy.url().should('include', '/cat_pics');
+        cy.get('h1').should('have.text', '/cat_pics');
+        cy.get('a').should(($a) => {
+            expect($a).to.have.length(3);
+            expect($a.first()).to.contain('2janu.jpg');
+            expect($a[1]).to.contain('ella.jpg');
+            expect($a.last()).to.contain('janu.jpg');
+        });
     });
 });
