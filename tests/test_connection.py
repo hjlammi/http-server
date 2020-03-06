@@ -170,7 +170,7 @@ def test_parsed_request_is_stored_in_the_connection():
     assert connection.parsed_request.method == 'GET'
     assert connection.parsed_request.uri == '/path/to/example.com'
     assert connection.parsed_request.http_version == 'HTTP/1.1'
-    assert connection.parsed_request.headers == {'Host': 'www.w3.org', 'accept': 'text/html'}
+    assert connection.parsed_request.headers == {'host': 'www.w3.org', 'accept': 'text/html'}
 
 def test_no_request_body_read_without_content_length_header():
     connection = Connection(ADDR, fake_socket, Mock())

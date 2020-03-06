@@ -50,4 +50,4 @@ class TreeToRequest(Transformer):
             headers.update({header_args[1].value: header_args[3].value})
             return headers
         else:
-            return {header_args[0].value: header_args[2].value}
+            return {header_args[0].value.lower(): header_args[2].value}
