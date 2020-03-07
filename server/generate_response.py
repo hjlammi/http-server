@@ -1,5 +1,5 @@
 from os import scandir, path
-import filetype
+import magic
 from .response import Response
 
 BODY_NOT_FOUND = b'<h1>Page not found</h1>\r\n'
@@ -16,12 +16,12 @@ def generate_response(request, path_to_serve):
 
         if request.method == 'GET' or 'HEAD':
             if path.isfile(path_to_resource):
-                type_of_file = filetype.guess(path_to_resource)
-                if (type_of_file):
+                mime_type = magic.from_file(path_to_resource, mime=True)
+                if (mime_type):
                     size = path.getsize(path_to_resource)
                     body = read_file_contents_in_bytes(path_to_resource)
                     headers = [
-                        f'Content-Type: {type_of_file.mime}',
+                        f'Content-Type: {mime_type}',
                         f'Content-Length: {size}'
                     ]
                 else:
