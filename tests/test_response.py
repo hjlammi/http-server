@@ -11,7 +11,7 @@ def test_serialize_204_no_content_response_without_headers_and_body():
     assert response.serialize() == expected_result
 
 def test_serialize_200_ok_response_with_html_body():
-    body = '<h1>jee</h1>\r\n'
+    body = b'<h1>jee</h1>\r\n'
     content_type = 'Content-Type: text/html'
     content_length = f'Content-Length: {len(body)}'
     headers = [content_type, content_length]

@@ -26,17 +26,17 @@ def test_get_contents_from_subdir():
 def test_list_dir_contents_in_html():
     result = list_dir_contents_in_html('tests/webroot', 'tests/webroot')
 
-    assert result == '<h1>/</h1><table><tbody><tr><td><a href="cat_pics">cat_pics/</a></td></tr><tr><td><a href="random">random/</a></td></tr><tr><td><a href="lorem_ipsum.txt">lorem_ipsum.txt</a></td></tr></tbody></table>'
+    assert result == b'<h1>/</h1><table><tbody><tr><td><a href="cat_pics">cat_pics/</a></td></tr><tr><td><a href="random">random/</a></td></tr><tr><td><a href="lorem_ipsum.txt">lorem_ipsum.txt</a></td></tr></tbody></table>'
 
 def test_list_subdir_contents_in_html():
     result = list_dir_contents_in_html('tests/webroot/cat_pics', 'tests/webroot/')
 
-    assert result == '<h1>/cat_pics</h1><table><tbody><tr><td><a href="2janu.jpg">2janu.jpg</a></td></tr><tr><td><a href="ella.jpg">ella.jpg</a></td></tr><tr><td><a href="janu.jpg">janu.jpg</a></td></tr></tbody></table>'
+    assert result == b'<h1>/cat_pics</h1><table><tbody><tr><td><a href="2janu.jpg">2janu.jpg</a></td></tr><tr><td><a href="ella.jpg">ella.jpg</a></td></tr><tr><td><a href="janu.jpg">janu.jpg</a></td></tr></tbody></table>'
 
 def test_read_text_file_contents():
     result = read_file_contents('tests/webroot/lorem_ipsum.txt')
 
-    assert result == 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.\n'
+    assert result == b'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.\n'
 
 def test_is_a_valid_resource():
     assert is_a_valid_resource('tests/webroot/lorem_ipsum.txt') == True
@@ -65,3 +65,7 @@ def test_generate_301_response():
     request = Request('GET', '/cat_pics', None, None, None)
     expected_response = b'HTTP/1.1 301 Moved Permanently\r\nContent-Length: 0\r\nLocation: /cat_pics/\r\n\r\n'
     assert generate_301_response(request) == expected_response
+
+def test_read_file_contents_in_bytes():
+    expected = 'ffd8ffe1a3fe'
+    assert read_file_contents_in_bytes('tests/webroot/cat_pics/ella.jpg')[:6].hex() == expected

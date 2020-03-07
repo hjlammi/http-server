@@ -1,7 +1,7 @@
 from os import scandir, path
 from .response import Response
 
-BODY_NOT_FOUND = '<h1>Page not found</h1>\r\n'
+BODY_NOT_FOUND = b'<h1>Page not found</h1>\r\n'
 def generate_response(request, path_to_serve):
     body = None
     headers = None
@@ -17,7 +17,7 @@ def generate_response(request, path_to_serve):
                 body = read_file_contents(path_to_resource)
             else:
                 body = list_dir_contents_in_html(path_to_resource, path_to_serve)
-                body += '\r\n'
+                body += b'\r\n'
 
         headers = [
             'Content-Type: text/html',
@@ -63,12 +63,16 @@ def list_dir_contents_in_html(path_to_resource, path_to_serve):
         html += f'<tr><td><a href="{href}">{content}</a></td></tr>'
 
     html += '</tbody></table>'
-    return html
+    return html.encode()
 
 def read_file_contents(path_to_file):
     with open(path_to_file) as file:
         read_contents = file.read()
-        return read_contents
+        return read_contents.encode()
+
+def read_file_contents_in_bytes(path_to_file):
+    with open(path_to_file, 'rb') as file:
+        return file.read()
 
 def is_a_valid_resource(path_to_resource):
     if path.isfile(path_to_resource):
