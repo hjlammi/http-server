@@ -25,7 +25,7 @@ def generate_response(request, path_to_serve):
                         f'Content-Length: {size}'
                     ]
                 else:
-                    body = read_file_contents(path_to_resource)
+                    body = read_file_contents_in_bytes(path_to_resource)
                     headers = [
                         'Content-Type: text/html',
                         f'Content-Length: {len(body)}'
@@ -80,11 +80,6 @@ def list_dir_contents_in_html(path_to_resource, path_to_serve):
 
     html += '</tbody></table>'
     return html.encode()
-
-def read_file_contents(path_to_file):
-    with open(path_to_file) as file:
-        read_contents = file.read()
-        return read_contents.encode()
 
 def read_file_contents_in_bytes(path_to_file):
     with open(path_to_file, 'rb') as file:
