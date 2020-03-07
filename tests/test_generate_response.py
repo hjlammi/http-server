@@ -56,5 +56,12 @@ def test_get_relative_path_for_root_dir_without_end_slash():
 def test_get_relative_path_for_cat_pics_subdir():
     assert get_relative_path('tests/webroot/cat_pics', 'tests/webroot/') == '/cat_pics'
 
-def test_get_relative_path_for_cat_pics_subdir_without_end_slash():
-    assert get_relative_path('tests/webroot/cat_pics', 'tests/webroot') == '/cat_pics'
+def test_sends_redirect_response_if_dir_without_end_slash():
+    request = Request('GET', '/cat_pics', None, None, None)
+    expected_result = b'HTTP/1.1 301 Moved Permanently\r\nContent-Length: 0\r\nLocation: /cat_pics/\r\n\r\n'
+    assert generate_response(request, 'tests/webroot') == expected_result
+
+def test_generate_301_response():
+    request = Request('GET', '/cat_pics', None, None, None)
+    expected_response = b'HTTP/1.1 301 Moved Permanently\r\nContent-Length: 0\r\nLocation: /cat_pics/\r\n\r\n'
+    assert generate_301_response(request) == expected_response

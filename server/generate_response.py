@@ -7,6 +7,8 @@ def generate_response(request, path_to_serve):
     headers = None
 
     path_to_resource = path_to_serve + request.uri
+    if path.isdir(path_to_resource) and not path_to_resource.endswith('/'):
+        return generate_301_response(request);
     if is_a_valid_resource(path_to_resource):
         status_code = 200
 
@@ -85,3 +87,11 @@ def get_relative_path(path_to_resource, path_to_serve):
     if not relative_path:
         relative_path = '/'
     return relative_path
+
+def generate_301_response(request):
+    headers = [
+        'Content-Length: 0',
+        f'Location: {request.uri}/'
+    ]
+    response = Response(301, headers, None, None)
+    return response.serialize()
