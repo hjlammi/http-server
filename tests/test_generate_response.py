@@ -69,3 +69,8 @@ def test_generate_301_response():
 def test_read_file_contents_in_bytes():
     expected = 'ffd8ffe1a3fe'
     assert read_file_contents_in_bytes('tests/webroot/cat_pics/ella.jpg')[:6].hex() == expected
+
+def test_generate_response_with_png_mime_type_and_bytes_body():
+    request = Request('GET', '/random/Screenshot_20161222-082602.png', None, None, None)
+    expected_result = b'HTTP/1.1 200 OK\r\nContent-Type: image/png\r\nContent-Length: 62995\r\n\r\n\x89PN'
+    assert generate_response(request, 'tests/webroot')[:70] == expected_result

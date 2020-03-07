@@ -16,12 +16,12 @@ def generate_response(request, path_to_serve):
 
         if request.method == 'GET' or 'HEAD':
             if path.isfile(path_to_resource):
-                if (filetype.guess(path_to_resource)):
+                type_of_file = filetype.guess(path_to_resource)
+                if (type_of_file):
                     size = path.getsize(path_to_resource)
-                    host = request.headers['host']
                     body = read_file_contents_in_bytes(path_to_resource)
                     headers = [
-                        'Content-Type: image/jpeg',
+                        f'Content-Type: {type_of_file.mime}',
                         f'Content-Length: {size}'
                     ]
                 else:
@@ -49,7 +49,8 @@ def generate_response(request, path_to_serve):
         response = Response(status_code, headers, body)
     elif request.method == 'HEAD':
         response = Response(status_code, headers, None)
-    return response.serialize()
+    response_bytestr = response.serialize()
+    return response_bytestr
 
 def get_contents_from_dir(path):
     dirs = []

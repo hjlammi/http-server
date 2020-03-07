@@ -73,6 +73,7 @@ describe('server', function() {
         cy.get('h1').should('not.contain', 'Page not found');
         cy.get('img').should('be.visible').and(($img) => {
             expect($img[0].naturalWidth).to.be.greaterThan(0);
+            expect($img[0].src).to.contain('/random/Screenshot');
         });
     });
 });
