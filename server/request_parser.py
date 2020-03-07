@@ -8,7 +8,7 @@ grammar = r'''
     headers: (headers)* HEADER_KEY":" WS HEADER_VALUE (CR LF)?
 
     METHOD: "GET"
-    URI: /\/[a-zA-Z0-9\/._]*/
+    URI: /\/[a-zA-Z0-9\/._-]*/
     VERSION: "HTTP/1.1"
     HEADER_KEY: /[a-zA-Z0-9\-]+/
     HEADER_VALUE: /[^\r\n]+/

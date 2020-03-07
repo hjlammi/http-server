@@ -56,10 +56,20 @@ describe('server', function() {
         });
     });
 
-    it('shows cat pic on the page after clicking one of the links', function() {
+    it('shows cat pic on the page after clicking one of the links in cat_pics folder', function() {
         cy.get('a').contains('cat_pics').click();
         cy.get('a').contains('ella').click();
         cy.url().should('include', '/cat_pics/ella.jpg');
+        cy.get('h1').should('not.contain', 'Page not found');
+        cy.get('img').should('be.visible').and(($img) => {
+            expect($img[0].naturalWidth).to.be.greaterThan(0);
+        });
+    });
+
+    it('shows a png screenshot on the page after navigating to "random" folder and clicking screenshot link', function() {
+        cy.get('a').contains('random').click();
+        cy.get('a').contains('Screenshot').click();
+        cy.url().should('include', '/random/Screenshot');
         cy.get('h1').should('not.contain', 'Page not found');
         cy.get('img').should('be.visible').and(($img) => {
             expect($img[0].naturalWidth).to.be.greaterThan(0);
