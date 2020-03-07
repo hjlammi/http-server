@@ -1,7 +1,6 @@
 from os import scandir, path
 from .response import Response
 
-BODY_SUCCESS = '<h1>Hello World</h1>\r\n'
 BODY_NOT_FOUND = '<h1>Page not found</h1>\r\n'
 def generate_response(request, path_to_serve):
     body = None
