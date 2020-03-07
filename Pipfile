@@ -8,6 +8,7 @@ pytest = "*"
 
 [packages]
 lark-parser = "*"
+filetype = "*"
 
 [requires]
 python_version = "3.8"

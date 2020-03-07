@@ -1,10 +1,12 @@
 from os import scandir, path
+import filetype
 from .response import Response
 
 BODY_NOT_FOUND = b'<h1>Page not found</h1>\r\n'
 def generate_response(request, path_to_serve):
     body = None
     headers = None
+    response = None
 
     path_to_resource = path_to_serve + request.uri
     if path.isdir(path_to_resource) and not path_to_resource.endswith('/'):
@@ -14,15 +16,28 @@ def generate_response(request, path_to_serve):
 
         if request.method == 'GET' or 'HEAD':
             if path.isfile(path_to_resource):
-                body = read_file_contents(path_to_resource)
+                if (filetype.guess(path_to_resource)):
+                    size = path.getsize(path_to_resource)
+                    host = request.headers['host']
+                    body = read_file_contents_in_bytes(path_to_resource)
+                    headers = [
+                        'Content-Type: image/jpeg',
+                        f'Content-Length: {size}'
+                    ]
+                else:
+                    body = read_file_contents(path_to_resource)
+                    headers = [
+                        'Content-Type: text/html',
+                        f'Content-Length: {len(body)}'
+                    ]
             else:
                 body = list_dir_contents_in_html(path_to_resource, path_to_serve)
                 body += b'\r\n'
+                headers = [
+                    'Content-Type: text/html',
+                    f'Content-Length: {len(body)}'
+                ]
 
-        headers = [
-            'Content-Type: text/html',
-            f'Content-Length: {len(body)}'
-        ]
     else:
         status_code = 404
         headers = [

@@ -55,4 +55,14 @@ describe('server', function() {
             expect($a.last()).to.contain('janu.jpg');
         });
     });
+
+    it('shows cat pic on the page after clicking one of the links', function() {
+        cy.get('a').contains('cat_pics').click();
+        cy.get('a').contains('ella').click();
+        cy.url().should('include', '/cat_pics/ella.jpg');
+        cy.get('h1').should('not.contain', 'Page not found');
+        cy.get('img').should('be.visible').and(($img) => {
+            expect($img[0].naturalWidth).to.be.greaterThan(0);
+        });
+    });
 });
