@@ -24,12 +24,6 @@ def generate_response(request, path_to_serve):
                         f'Content-Type: {mime_type}',
                         f'Content-Length: {size}'
                     ]
-                else:
-                    body = read_file_contents_in_bytes(path_to_resource)
-                    headers = [
-                        'Content-Type: text/html',
-                        f'Content-Length: {len(body)}'
-                    ]
             else:
                 body = list_dir_contents_in_html(path_to_resource, path_to_serve)
                 body += b'\r\n'
