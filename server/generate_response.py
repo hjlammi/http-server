@@ -95,7 +95,7 @@ def generate_404_response(request):
     response = Response(404, headers, response_body)
     return response.serialize()
 
-def generate_response_for_a_file_request(path_to_resource, mime_type, method):
+def generate_response_for_a_file_request(path_to_resource, mime_type, method='GET'):
     size = path.getsize(path_to_resource)
     body = read_file_contents_in_bytes(path_to_resource)
     headers = [
