@@ -11,21 +11,13 @@ def generate_response(request, path_to_serve):
     if path.isdir(path_to_resource) and not path_to_resource.endswith('/'):
         return generate_301_response(request);
     if is_a_valid_resource(path_to_resource):
-        status_code = 200
-
         if request.method == 'GET' or 'HEAD':
             if path.isfile(path_to_resource):
                 mime_type = magic.from_file(path_to_resource, mime=True)
                 if (mime_type):
                     return generate_response_for_a_file_request(path_to_resource, mime_type, request.method)
             else:
-                body = list_dir_contents_in_html(path_to_resource, path_to_serve)
-                body += b'\r\n'
-                headers = [
-                    'Content-Type: text/html',
-                    f'Content-Length: {len(body)}'
-                ]
-
+                return generate_response_for_a_dir_reguest(path_to_resource, path_to_serve, request.method)
     else:
         return generate_404_response(request)
     if request.method == 'GET':
@@ -109,6 +101,20 @@ def generate_response_for_a_file_request(path_to_resource, mime_type, method):
     headers = [
         f'Content-Type: {mime_type}',
         f'Content-Length: {size}'
+    ]
+
+    # RFC2616: The HEAD method is identical to GET except that the server MUST NOT return a message-body in the response.
+    if method == 'HEAD':
+        body = None
+    response = Response(200, headers, body)
+    return response.serialize()
+
+def generate_response_for_a_dir_reguest(path_to_resource, path_to_serve, method='GET'):
+    body = list_dir_contents_in_html(path_to_resource, path_to_serve)
+    body += b'\r\n'
+    headers = [
+        'Content-Type: text/html',
+        f'Content-Length: {len(body)}'
     ]
 
     # RFC2616: The HEAD method is identical to GET except that the server MUST NOT return a message-body in the response.

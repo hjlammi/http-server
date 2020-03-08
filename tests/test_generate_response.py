@@ -99,3 +99,9 @@ def test_generate_response_for_HEAD_request_of_a_text_file():
     request = Request('HEAD', '/lorem_ipsum.txt', None, None, None)
     expected_result = b'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 362\r\n\r\n'
     assert generate_response(request, 'tests/webroot') == expected_result
+
+def test_generate_response_for_a_dir_request():
+    expected_response = b'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 192\r\n\r\n<h1>/random</h1><table><tbody><tr><td><a href="Screenshot_20161222-082602.png">Screenshot_20161222-082602.png</a></td></tr><tr><td><a href="drops.jpg">drops.jpg</a></td></tr></tbody></table>\r\n'
+    path_to_resource = 'tests/webroot/random'
+    path_to_serve = 'tests/webroot'
+    assert generate_response_for_a_dir_reguest(path_to_resource, path_to_serve) == expected_response
