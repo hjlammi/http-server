@@ -17,12 +17,7 @@ def generate_response(request, path_to_serve):
             if path.isfile(path_to_resource):
                 mime_type = magic.from_file(path_to_resource, mime=True)
                 if (mime_type):
-                    size = path.getsize(path_to_resource)
-                    body = read_file_contents_in_bytes(path_to_resource)
-                    headers = [
-                        f'Content-Type: {mime_type}',
-                        f'Content-Length: {size}'
-                    ]
+                    return generate_response_for_a_file_request(path_to_resource, mime_type)
             else:
                 body = list_dir_contents_in_html(path_to_resource, path_to_serve)
                 body += b'\r\n'
@@ -106,4 +101,14 @@ def generate_404_response(request):
         f'Location: {request.uri}/'
     ]
     response = Response(404, headers, response_body)
+    return response.serialize()
+
+def generate_response_for_a_file_request(path_to_resource, mime_type):
+    size = path.getsize(path_to_resource)
+    body = read_file_contents_in_bytes(path_to_resource)
+    headers = [
+        f'Content-Type: {mime_type}',
+        f'Content-Length: {size}'
+    ]
+    response = Response(200, headers, body)
     return response.serialize()

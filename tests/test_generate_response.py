@@ -79,3 +79,15 @@ def test_generate_404_response():
     request = Request('GET', '/notfound', None, None, None)
     expected_response = b'HTTP/1.1 404 Not Found\r\nContent-Length: 25\r\nLocation: /notfound/\r\n\r\n<h1>Page not found</h1>\r\n'
     assert generate_404_response(request) == expected_response
+
+def test_generate_response_with_file_contents_for_text_file():
+    path_to_resource = 'tests/webroot/lorem_ipsum.txt'
+    mime_type = 'text/plain'
+    expected_response = b'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 362\r\n\r\nLorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.\n'
+    assert generate_response_for_a_file_request(path_to_resource, mime_type) == expected_response
+
+def test_generate_response_with_file_contents_for_image_file():
+    path_to_resource = 'tests/webroot/cat_pics/ella.jpg'
+    mime_type = 'image/jpeg'
+    expected_beginning_of_response = b'HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\nContent-Length: 1033012\r\n\r\n\xff\xd8\xff\xe1\xa3\xfe'
+    assert generate_response_for_a_file_request(path_to_resource, mime_type)[:76] == expected_beginning_of_response
