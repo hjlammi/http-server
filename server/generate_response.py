@@ -2,7 +2,6 @@ from os import scandir, path
 import magic
 from .response import Response
 
-BODY_NOT_FOUND = b'<h1>Page not found</h1>\r\n'
 def generate_response(request, path_to_serve):
     body = None
     headers = None
@@ -33,12 +32,7 @@ def generate_response(request, path_to_serve):
                 ]
 
     else:
-        status_code = 404
-        headers = [
-            'Content-Type: text/html',
-            f'Content-Length: {len(BODY_NOT_FOUND)}'
-        ]
-        body = BODY_NOT_FOUND
+        return generate_404_response(request)
     if request.method == 'GET':
         response = Response(status_code, headers, body)
     elif request.method == 'HEAD':
@@ -103,4 +97,13 @@ def generate_301_response(request):
         f'Location: {request.uri}/'
     ]
     response = Response(301, headers, None, None)
+    return response.serialize()
+
+def generate_404_response(request):
+    response_body = b'<h1>Page not found</h1>\r\n'
+    headers = [
+        f'Content-Length: {len(response_body)}',
+        f'Location: {request.uri}/'
+    ]
+    response = Response(404, headers, response_body)
     return response.serialize()

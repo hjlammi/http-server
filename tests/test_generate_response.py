@@ -74,3 +74,8 @@ def test_generate_response_with_png_mime_type_and_bytes_body():
     request = Request('GET', '/random/Screenshot_20161222-082602.png', None, None, None)
     expected_result = b'HTTP/1.1 200 OK\r\nContent-Type: image/png\r\nContent-Length: 62995\r\n\r\n\x89PN'
     assert generate_response(request, 'tests/webroot')[:70] == expected_result
+
+def test_generate_404_response():
+    request = Request('GET', '/notfound', None, None, None)
+    expected_response = b'HTTP/1.1 404 Not Found\r\nContent-Length: 25\r\nLocation: /notfound/\r\n\r\n<h1>Page not found</h1>\r\n'
+    assert generate_404_response(request) == expected_response
