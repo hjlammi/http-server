@@ -20,12 +20,6 @@ def generate_response(request, path_to_serve):
                 return generate_response_for_a_dir_reguest(path_to_resource, path_to_serve, request.method)
     else:
         return generate_404_response(request)
-    if request.method == 'GET':
-        response = Response(status_code, headers, body)
-    elif request.method == 'HEAD':
-        response = Response(status_code, headers, None)
-    response_bytestr = response.serialize()
-    return response_bytestr
 
 def get_contents_from_dir(path):
     dirs = []
