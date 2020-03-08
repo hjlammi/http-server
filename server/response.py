@@ -5,7 +5,8 @@ REASON_PHRASES = {
     200: 'OK',
     204: 'No Content',
     301: 'Moved Permanently',
-    404: 'Not Found'
+    404: 'Not Found',
+    501: 'Not Implemented'
 }
 
 @dataclass

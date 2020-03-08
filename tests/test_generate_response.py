@@ -105,3 +105,12 @@ def test_generate_response_for_a_dir_request():
     path_to_resource = 'tests/webroot/random'
     path_to_serve = 'tests/webroot'
     assert generate_response_for_a_dir_reguest(path_to_resource, path_to_serve) == expected_response
+
+def test_generate_response_for_PUT_request():
+    request = Request('PUT', '/', None, None, None)
+    expected_result = b'HTTP/1.1 501 Not Implemented\r\n\r\n'
+    assert generate_response(request, 'tests/webroot') == expected_result
+
+def test_generate_not_implemented_response_for_PUT_request():
+    expected_response = b'HTTP/1.1 501 Not Implemented\r\n\r\n'
+    assert generate_501_response() == expected_response

@@ -2,18 +2,22 @@ from os import scandir, path
 import magic
 from .response import Response
 
+IMPLEMENTED_METHODS = ['GET', 'HEAD']
+
 def generate_response(request, path_to_serve):
     path_to_resource = path_to_serve + request.uri
     if path.isdir(path_to_resource) and not path_to_resource.endswith('/'):
         return generate_301_response(request);
     if is_a_valid_resource(path_to_resource):
-        if request.method == 'GET' or 'HEAD':
+        if request.method in IMPLEMENTED_METHODS:
             if path.isfile(path_to_resource):
                 mime_type = magic.from_file(path_to_resource, mime=True)
                 if (mime_type):
                     return generate_response_for_a_file_request(path_to_resource, mime_type, request.method)
             else:
                 return generate_response_for_a_dir_reguest(path_to_resource, path_to_serve, request.method)
+        else:
+            return generate_501_response()
     else:
         return generate_404_response(request)
 
@@ -112,3 +116,6 @@ def generate_response_for_a_dir_reguest(path_to_resource, path_to_serve, method=
         body = None
     response = Response(200, headers, body)
     return response.serialize()
+
+def generate_501_response():
+    return Response(501).serialize()
