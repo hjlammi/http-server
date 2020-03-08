@@ -3,10 +3,6 @@ import magic
 from .response import Response
 
 def generate_response(request, path_to_serve):
-    body = None
-    headers = None
-    response = None
-
     path_to_resource = path_to_serve + request.uri
     if path.isdir(path_to_resource) and not path_to_resource.endswith('/'):
         return generate_301_response(request);
