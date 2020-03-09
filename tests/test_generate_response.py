@@ -17,7 +17,6 @@ def test_get_contents_from_root():
 
     assert result == ['cat_pics/', 'random/', 'lorem_ipsum.txt']
 
-@pytest.mark.focus
 def test_get_contents_from_subdir():
     result = get_contents_from_dir('tests/webroot/cat_pics')
 

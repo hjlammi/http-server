@@ -77,7 +77,7 @@ def generate_301_response(request):
         'Content-Length: 0',
         f'Location: {request.uri}/'
     ]
-    response = Response(301, headers, None, None)
+    response = Response(301, headers)
     return response.serialize()
 
 def generate_404_response(request):
