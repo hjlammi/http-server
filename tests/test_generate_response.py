@@ -96,7 +96,9 @@ def test_generate_response_with_file_contents_for_image_file():
 
 def test_generate_response_for_HEAD_request_of_a_text_file():
     request = Request('HEAD', '/lorem_ipsum.txt', None, None, None)
-    expected_result = b'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 362\r\n\r\n'
+    expected_result = b'HTTP/1.1 200 OK\r\n' \
+                      b'Content-Type: text/plain\r\n' \
+                      b'Content-Length: 362\r\n\r\n'
     assert generate_response(request, 'tests/webroot') == expected_result
 
 def test_generate_response_for_a_dir_request():
